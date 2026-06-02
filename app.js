@@ -652,48 +652,68 @@ const VIEW_ORDER = ["day", "week", "month", "year", "simulation"];
 let activeAssignRoutine = null;
 let isSyncingInProgress = false;
 
+// Safely parse JSON from local storage with fallback
+function safeJSONParse(str, fallback) {
+  try {
+    if (str === null || str === undefined || str === "") return fallback;
+    return JSON.parse(str);
+  } catch (e) {
+    console.error("AetherFlow JSON parsing error:", e, "Input was:", str);
+    return fallback;
+  }
+}
+
+// Safe wrapper for Lucide icons to prevent crash if unpkg fails
+const lucide = {
+  createIcons: function() {
+    if (typeof window !== "undefined" && window.lucide && typeof window.lucide.createIcons === "function") {
+      try {
+        window.lucide.createIcons();
+      } catch (e) {
+        console.error("Lucide icon generation error:", e);
+      }
+    } else {
+      console.warn("Lucide library is not loaded.");
+    }
+  }
+};
+
 /* ----------------------------------------------------
    Initialization & Event Listeners
 ---------------------------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
   // Load tasks from localStorage or set defaults
   const savedTasks = localStorage.getItem("aetherflow_tasks");
-  if (savedTasks) {
-    state.tasks = JSON.parse(savedTasks);
-  } else {
+  state.tasks = safeJSONParse(savedTasks, null);
+  if (!state.tasks || !Array.isArray(state.tasks)) {
     state.tasks = [...defaultTasks];
     localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
   }
 
   // Load user stats
   const savedStats = localStorage.getItem("aetherflow_stats");
-  if (savedStats) {
-    state.userStats = JSON.parse(savedStats);
-  } else {
+  state.userStats = safeJSONParse(savedStats, null);
+  if (!state.userStats || typeof state.userStats !== "object") {
+    state.userStats = { xp: 120, level: 1, stress: 30, value: 50 };
     localStorage.setItem("aetherflow_stats", JSON.stringify(state.userStats));
   }
 
   // Load Custom Groups
   const savedGroups = localStorage.getItem("aetherflow_template_groups");
-  if (savedGroups) {
-    state.groups = JSON.parse(savedGroups);
-  } else {
+  state.groups = safeJSONParse(savedGroups, null);
+  if (!state.groups || !Array.isArray(state.groups)) {
     state.groups = [...defaultGroups];
     localStorage.setItem("aetherflow_template_groups", JSON.stringify(state.groups));
   }
 
   // Load Collapsed Groups state
   const savedCollapsed = localStorage.getItem("aetherflow_collapsed_groups");
-  if (savedCollapsed) {
-    state.collapsedGroups = JSON.parse(savedCollapsed);
-  } else {
-    state.collapsedGroups = { "group-past": true }; // past routines collapsed by default
-  }
+  state.collapsedGroups = safeJSONParse(savedCollapsed, { "group-past": true });
 
   // Load custom templates & check for deleted built-ins
   const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
-  const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
-  const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
+  const deletedBuiltinIds = safeJSONParse(localStorage.getItem("aetherflow_deleted_templates"), []);
+  const modifiedBuiltins = safeJSONParse(localStorage.getItem("aetherflow_modified_builtins"), {});
   
   // Combine all built-ins (regular and past templates)
   const allBuiltins = [
@@ -709,7 +729,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return t;
   });
   
-  const parsedCustoms = JSON.parse(savedCustomTemplates);
+  const parsedCustoms = safeJSONParse(savedCustomTemplates, []);
   state.templates = [...filteredBuiltins, ...parsedCustoms];
 
   // Initialize Lucide Icons
@@ -779,14 +799,14 @@ document.addEventListener("DOMContentLoaded", () => {
           localStorage.setItem("aetherflow_sync_time", remoteSyncTime);
           
           // Reload local states to UI state
-          state.tasks = JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]");
-          state.userStats = JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}');
-          state.groups = JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]");
-          state.collapsedGroups = JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}");
+          state.tasks = safeJSONParse(localStorage.getItem("aetherflow_tasks"), []);
+          state.userStats = safeJSONParse(localStorage.getItem("aetherflow_stats"), { xp: 120, level: 1, stress: 30, value: 50 });
+          state.groups = safeJSONParse(localStorage.getItem("aetherflow_template_groups"), []);
+          state.collapsedGroups = safeJSONParse(localStorage.getItem("aetherflow_collapsed_groups"), {});
           
           const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
-          const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
-          const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
+          const deletedBuiltinIds = safeJSONParse(localStorage.getItem("aetherflow_deleted_templates"), []);
+          const modifiedBuiltins = safeJSONParse(localStorage.getItem("aetherflow_modified_builtins"), {});
           const allBuiltins = [
             ...templates,
             ...pastTemplates.map(t => ({ ...t, groupId: "group-past", past: true }))
@@ -795,7 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (modifiedBuiltins[t.id]) return { ...t, ...modifiedBuiltins[t.id] };
             return t;
           });
-          state.templates = [...filteredBuiltins, ...JSON.parse(savedCustomTemplates)];
+          state.templates = [...filteredBuiltins, ...safeJSONParse(savedCustomTemplates, [])];
           
           // Re-render UI
           renderCalendar();
@@ -2079,7 +2099,10 @@ function formatHourLabel(h) {
 
 // Converts 24h format HH:MM into AM/PM
 function formatTime12h(time24) {
-  const [h, m] = time24.split(":").map(Number);
+  if (!time24 || typeof time24 !== 'string') return "12:00 AM";
+  const parts = time24.split(":");
+  if (parts.length < 2) return "12:00 AM";
+  const [h, m] = parts.map(Number);
   const suffix = h >= 12 ? "PM" : "AM";
   const displayHour = h % 12 === 0 ? 12 : h % 12;
   return `${displayHour}:${String(m).padStart(2, '0')} ${suffix}`;
@@ -2087,8 +2110,11 @@ function formatTime12h(time24) {
 
 // Converts HH:MM string to absolute minutes from start of day
 function getMinutes(timeStr) {
-  const [h, m] = timeStr.split(":").map(Number);
-  return h * 60 + m;
+  if (!timeStr || typeof timeStr !== 'string') return 0;
+  const parts = timeStr.split(":");
+  if (parts.length < 2) return 0;
+  const [h, m] = parts.map(Number);
+  return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
 }
 
 // Generates simple unique key
@@ -2209,7 +2235,7 @@ function renderActionTemplates() {
       tabsBar.style.padding = "3px";
       tabsBar.style.margin = "0.5rem 0";
       tabsBar.innerHTML = `
-        <button class="templates-tab-btn active" data-tab="blocks" style="flex: 1; text-align: center; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; border-radius: 6px; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; transition: all 0.2s;">Action Blocks</button>
+        <button class="templates-tab-btn" data-tab="blocks" style="flex: 1; text-align: center; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">Action Blocks</button>
         <button class="templates-tab-btn" data-tab="routines" style="flex: 1; text-align: center; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">Daily Routines</button>
       `;
       
@@ -2223,22 +2249,26 @@ function renderActionTemplates() {
           soundEffects.play("click");
           const tab = btn.getAttribute("data-tab");
           state.activeTemplateTab = tab;
-          
-          tabsBar.querySelectorAll(".templates-tab-btn").forEach(b => {
-            b.classList.remove("active");
-            b.style.background = "transparent";
-            b.style.color = "var(--text-muted)";
-          });
-          btn.classList.add("active");
-          btn.style.background = "rgba(255,255,255,0.08)";
-          btn.style.color = "white";
-          
           renderActionTemplates();
         });
       });
     } else {
       tabsBar.style.display = "flex";
     }
+
+    // Always synchronize active class and styling on buttons every render
+    tabsBar.querySelectorAll(".templates-tab-btn").forEach(btn => {
+      const tab = btn.getAttribute("data-tab");
+      if (tab === state.activeTemplateTab) {
+        btn.classList.add("active");
+        btn.style.background = "rgba(255,255,255,0.08)";
+        btn.style.color = "white";
+      } else {
+        btn.classList.remove("active");
+        btn.style.background = "transparent";
+        btn.style.color = "var(--text-muted)";
+      }
+    });
   }
 
   // Ensure activeTemplateTab is initialized

@@ -12,6 +12,36 @@
   <link rel="stylesheet" href="styles.css">
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Global Error Handler & Crash Catcher -->
+  <script>
+    window.addEventListener('error', function(event) {
+      let overlay = document.getElementById('error-boundary-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'error-boundary-overlay';
+        overlay.setAttribute('style', 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(8px); z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 2rem; color: white; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;');
+        overlay.innerHTML = `
+          <div style="max-width: 500px; width: 100%; text-align: center; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); background: #1e293b; padding: 2.5rem; border-radius: 16px;">
+            <div style="color: #ef4444; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #f8fafc;">AetherFlow Encountered an Error</h2>
+            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem;">
+              An unexpected error occurred which caused the application to stop. This is often caused by cached scripts or incompatible browser data.
+            </p>
+            <div id="error-boundary-details" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1rem; text-align: left; font-family: monospace; font-size: 0.75rem; color: #f87171; max-height: 150px; overflow-y: auto; margin-bottom: 1.5rem; white-space: pre-wrap; word-break: break-all;"></div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+              <button style="padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: #475569; color: white; font-weight: 600; cursor: pointer;" onclick="window.location.reload(true)">🔄 Force Reload</button>
+              <button style="padding: 0.6rem 1.2rem; border-radius: 8px; border: none; background: #dc2626; color: white; font-weight: 600; cursor: pointer;" onclick="if(confirm('This will reset your local calendar data. Are you sure?')){localStorage.clear(); sessionStorage.clear(); window.location.reload(true);}">💥 Reset Local Data</button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+      }
+      const details = document.getElementById('error-boundary-details');
+      if (details) {
+        details.textContent = event.message + '\nat ' + event.filename + ':' + event.lineno + ':' + event.colno + '\n\nStack:\n' + (event.error ? event.error.stack : 'N/A');
+      }
+    });
+  </script>
 </head>
 <body>
 
