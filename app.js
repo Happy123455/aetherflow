@@ -642,7 +642,8 @@ const state = {
   activeSimulation: null,
   groups: [],
   collapsedGroups: {},
-  editingTemplateId: null
+  editingTemplateId: null,
+  activeTemplateTab: "blocks"
 };
 
 // Order for switching zoom directions
@@ -1152,7 +1153,31 @@ function renderDayView(parent) {
     dayCol.classList.remove("drag-over");
     
     soundEffects.play("swoosh");
-    const templateId = e.dataTransfer.getData("text/plain");
+    const dropDataStr = e.dataTransfer.getData("text/plain");
+    
+    // Check if drop data is a Daily Routine
+    let isDailyRoutine = false;
+    let routineData = null;
+    try {
+      const parsed = JSON.parse(dropDataStr);
+      if (parsed && parsed.type === "daily-routine") {
+        isDailyRoutine = true;
+        routineData = parsed;
+      }
+    } catch (err) {}
+    
+    const targetDate = dayCol.getAttribute("data-date");
+
+    if (isDailyRoutine) {
+      promptApplyRoutine(routineData.title, (choice) => {
+        if (choice !== "cancel") {
+          applyRoutineStepsToDate(routineData.steps, targetDate, choice);
+        }
+      });
+      return;
+    }
+    
+    const templateId = dropDataStr;
     const template = state.templates.find(t => t.id === templateId) || pastTemplates.find(t => t.id === templateId);
     if (!template) return;
     
@@ -1169,7 +1194,7 @@ function renderDayView(parent) {
       id: generateUUID(),
       title: template.title,
       description: `Action Block: ${template.title}`,
-      date: dayCol.getAttribute("data-date"),
+      date: targetDate,
       startTime: timeStr,
       duration: template.duration,
       category: template.category,
@@ -1315,8 +1340,31 @@ function renderWeekView(parent) {
       dayCol.classList.remove("drag-over");
       
       soundEffects.play("swoosh");
+      const dropDataStr = e.dataTransfer.getData("text/plain");
       
-      const templateId = e.dataTransfer.getData("text/plain");
+      // Check if drop data is a Daily Routine
+      let isDailyRoutine = false;
+      let routineData = null;
+      try {
+        const parsed = JSON.parse(dropDataStr);
+        if (parsed && parsed.type === "daily-routine") {
+          isDailyRoutine = true;
+          routineData = parsed;
+        }
+      } catch (err) {}
+      
+      const targetDate = dayCol.getAttribute("data-date");
+
+      if (isDailyRoutine) {
+        promptApplyRoutine(routineData.title, (choice) => {
+          if (choice !== "cancel") {
+            applyRoutineStepsToDate(routineData.steps, targetDate, choice);
+          }
+        });
+        return;
+      }
+      
+      const templateId = dropDataStr;
       const template = state.templates.find(t => t.id === templateId) || pastTemplates.find(t => t.id === templateId);
       if (!template) return;
       
@@ -1333,7 +1381,7 @@ function renderWeekView(parent) {
         id: generateUUID(),
         title: template.title,
         description: `Action Block: ${template.title}`,
-        date: dayCol.getAttribute("data-date"),
+        date: targetDate,
         startTime: timeStr,
         duration: template.duration,
         category: template.category,
@@ -2143,9 +2191,67 @@ function renderActionTemplates() {
 
   container.innerHTML = "";
 
-  // Check if we are in Weekly Simulator view
   const sim = state.activeSimulation;
-  if (state.currentView === "simulation" && sim && sim.scenarioId === "weekly-simulator") {
+  const isWeeklySim = state.currentView === "simulation" && sim && sim.scenarioId === "weekly-simulator";
+  
+  // Manage Tabs Bar
+  let tabsBar = document.getElementById("templates-tabs-bar");
+  if (isWeeklySim) {
+    if (tabsBar) tabsBar.style.display = "none";
+  } else {
+    if (!tabsBar) {
+      tabsBar = document.createElement("div");
+      tabsBar.id = "templates-tabs-bar";
+      tabsBar.className = "templates-tabs-bar";
+      tabsBar.style.display = "flex";
+      tabsBar.style.background = "rgba(0,0,0,0.15)";
+      tabsBar.style.borderRadius = "8px";
+      tabsBar.style.padding = "3px";
+      tabsBar.style.margin = "0.5rem 0";
+      tabsBar.innerHTML = `
+        <button class="templates-tab-btn active" data-tab="blocks" style="flex: 1; text-align: center; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; border-radius: 6px; border: none; background: rgba(255,255,255,0.08); color: white; cursor: pointer; transition: all 0.2s;">Action Blocks</button>
+        <button class="templates-tab-btn" data-tab="routines" style="flex: 1; text-align: center; padding: 6px 12px; font-size: 0.8rem; font-weight: 500; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;">Daily Routines</button>
+      `;
+      
+      const searchContainer = document.querySelector(".templates-search-container");
+      if (searchContainer) {
+        searchContainer.parentNode.insertBefore(tabsBar, searchContainer.nextSibling);
+      }
+      
+      tabsBar.querySelectorAll(".templates-tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          soundEffects.play("click");
+          const tab = btn.getAttribute("data-tab");
+          state.activeTemplateTab = tab;
+          
+          tabsBar.querySelectorAll(".templates-tab-btn").forEach(b => {
+            b.classList.remove("active");
+            b.style.background = "transparent";
+            b.style.color = "var(--text-muted)";
+          });
+          btn.classList.add("active");
+          btn.style.background = "rgba(255,255,255,0.08)";
+          btn.style.color = "white";
+          
+          renderActionTemplates();
+        });
+      });
+    } else {
+      tabsBar.style.display = "flex";
+    }
+  }
+
+  // Ensure activeTemplateTab is initialized
+  if (!state.activeTemplateTab) {
+    state.activeTemplateTab = "blocks";
+  }
+
+  // Gather templates search query
+  const searchInput = document.getElementById("templates-search-input");
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+  // If in Weekly Simulator, or active tab is "routines", hijack to display Daily Routines
+  if (isWeeklySim || state.activeTemplateTab === "routines") {
     // Change templates widget title to "Daily Routines"
     const titleEl = document.querySelector(".templates-widget .widget-header h3");
     if (titleEl) {
@@ -2157,8 +2263,6 @@ function renderActionTemplates() {
 
     // Fetch daily routines and search query
     const routinesList = getAvailableDailyRoutines();
-    const searchInput = document.getElementById("templates-search-input");
-    const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
     const filteredRoutines = query 
       ? routinesList.filter(tpl => tpl.title.toLowerCase().includes(query))
       : routinesList;
@@ -2231,7 +2335,11 @@ function renderActionTemplates() {
 
       card.addEventListener("click", () => {
         soundEffects.play("click");
-        openAssignRoutineDialog(tpl);
+        if (isWeeklySim) {
+          openAssignRoutineDialog(tpl);
+        } else {
+          openApplyRoutineCalendarDialog(tpl);
+        }
       });
 
       container.appendChild(card);
@@ -5125,6 +5233,258 @@ function setupSyncDialogListeners() {
     });
   }
 }
+
+// Custom Premium Dialog to prompt user on drop (Overwrite vs. Append)
+function promptApplyRoutine(routineTitle, onChoice) {
+  const existing = document.getElementById("apply-routine-prompt-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "apply-routine-prompt-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "400px";
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i data-lucide="calendar" style="color:var(--primary);width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Apply Routine</h3>
+      </div>
+      <div style="padding: 1rem 1.5rem 1.5rem 1.5rem;">
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.25rem;">
+          How would you like to apply <strong>${routineTitle}</strong> to this day?
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="btn btn-primary" id="btn-apply-overwrite" style="padding: 0.75rem;">
+            💥 Overwrite (Clear existing tasks)
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-apply-append" style="padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-card);">
+            ➕ Append (Keep existing tasks)
+          </button>
+          <button type="button" class="btn" id="btn-apply-cancel" style="padding: 0.5rem; margin-top: 10px; background: transparent; color: var(--text-muted);">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  lucide.createIcons();
+
+  dialog.showModal();
+
+  dialog.querySelector("#btn-apply-overwrite").addEventListener("click", () => {
+    soundEffects.play("success");
+    dialog.close();
+    dialog.remove();
+    onChoice("overwrite");
+  });
+
+  dialog.querySelector("#btn-apply-append").addEventListener("click", () => {
+    soundEffects.play("click");
+    dialog.close();
+    dialog.remove();
+    onChoice("append");
+  });
+
+  dialog.querySelector("#btn-apply-cancel").addEventListener("click", () => {
+    soundEffects.play("click");
+    dialog.close();
+    dialog.remove();
+    onChoice("cancel");
+  });
+}
+
+// Apply steps of a daily routine to a specific date
+function applyRoutineStepsToDate(steps, targetDate, mode) {
+  if (mode === "cancel") return;
+  
+  if (mode === "overwrite") {
+    // Remove existing tasks for this date
+    state.tasks = state.tasks.filter(t => t.date !== targetDate);
+  }
+
+  // Create new tasks from steps
+  steps.forEach(step => {
+    const newTask = {
+      id: generateUUID(),
+      title: step.title,
+      description: `Routine Block: ${step.title}`,
+      date: targetDate,
+      startTime: step.time || "09:00",
+      duration: step.duration || 30,
+      category: step.category || "other",
+      completed: false,
+      xp: step.xp !== undefined ? step.xp : 20,
+      stress: step.stress !== undefined ? step.stress : 5,
+      value: step.value !== undefined ? step.value : 0
+    };
+    state.tasks.push(newTask);
+  });
+
+  // Save to local storage
+  localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+
+  // Re-render calendar UI
+  triggerViewChange(() => {
+    renderCalendar();
+    updateAgendaList();
+    renderUserStats();
+  });
+}
+
+// Click/Tap to Decide Calendar Routine Assigner for Touch Devices
+function openApplyRoutineCalendarDialog(routine) {
+  // If in simulation mode, route to standard weekly sim dialog
+  const sim = state.activeSimulation;
+  if (state.currentView === "simulation" && sim && sim.scenarioId === "weekly-simulator") {
+    openAssignRoutineDialog(routine);
+    return;
+  }
+
+  // Otherwise, get the date list for current viewed week
+  const current = new Date(state.currentDate);
+  const dayOfWeek = current.getDay(); // 0 Sunday, 1 Monday...
+  const distanceToMon = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const monday = new Date(current);
+  monday.setDate(current.getDate() + distanceToMon);
+
+  const weekDates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    weekDates.push(d.toISOString().split("T")[0]);
+  }
+
+  const existing = document.getElementById("apply-routine-calendar-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "apply-routine-calendar-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "480px";
+
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  let buttonsHtml = "";
+  weekdays.forEach((dayName, idx) => {
+    const dateStr = weekDates[idx];
+    const displayDate = new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const isSpan = idx === 6 ? "grid-column: span 2;" : "";
+    buttonsHtml += `
+      <button class="btn btn-secondary btn-apply-cal-day" data-date="${dateStr}" style="padding: 0.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 500; height: auto; gap: 4px; ${isSpan}">
+        <span>${dayName}</span>
+        <span style="font-size: 0.75rem; opacity: 0.6; font-weight: normal;">${displayDate}</span>
+      </button>
+    `;
+  });
+
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i data-lucide="calendar-range" style="color:var(--primary);width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Apply Routine to Calendar</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-apply-cal-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 1rem 1.5rem 1.5rem 1.5rem;">
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+          Select a day in the current week to apply <strong>${routine.title}</strong>:
+        </p>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1.25rem; font-style: italic;">
+          Week of ${new Date(weekDates[0]).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+        </p>
+        
+        <div class="weekday-buttons-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
+          ${buttonsHtml}
+        </div>
+
+        <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border-card); border-radius: 8px; padding: 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 0.85rem; font-weight: 500;">Clear existing tasks for that day?</span>
+          <label class="switch" style="position: relative; display: inline-block; width: 44px; height: 22px;">
+            <input type="checkbox" id="chk-apply-overwrite" checked style="opacity: 0; width: 0; height: 0;">
+            <span class="slider round" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 22px; border: 1px solid var(--border-card);"></span>
+          </label>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-card); padding-top: 1rem;">
+          <div style="display: flex; gap: 8px; align-items: center; font-size: 0.8rem; color: var(--text-muted);">
+            <i data-lucide="info" style="width: 14px; height: 14px;"></i>
+            <span>Or apply to a custom date:</span>
+          </div>
+          <input type="date" id="input-apply-custom-date" style="padding: 0.4rem 0.6rem; border-radius: 6px; background: rgba(0,0,0,0.2); border: 1px solid var(--border-card); color: white; font-size: 0.8rem;">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-apply-cal" style="padding: 0.5rem 1.25rem;">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-submit-apply-custom-date" style="padding: 0.5rem 1.25rem; display: none;">Apply</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Inject switch toggle styles dynamically if not present
+  if (!document.getElementById("apply-switch-styles")) {
+    const style = document.createElement("style");
+    style.id = "apply-switch-styles";
+    style.innerHTML = `
+      .switch input:checked + .slider { background-color: var(--primary) !important; }
+      .switch input:checked + .slider:before { transform: translateX(20px); }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  document.body.appendChild(dialog);
+  lucide.createIcons();
+  dialog.showModal();
+
+  const overwriteCheckbox = dialog.querySelector("#chk-apply-overwrite");
+  const customDateInput = dialog.querySelector("#input-apply-custom-date");
+  const submitCustomBtn = dialog.querySelector("#btn-submit-apply-custom-date");
+
+  customDateInput.addEventListener("change", () => {
+    if (customDateInput.value) {
+      submitCustomBtn.style.display = "block";
+    } else {
+      submitCustomBtn.style.display = "none";
+    }
+  });
+
+  const closeDialog = () => {
+    dialog.close();
+    dialog.remove();
+  };
+
+  dialog.querySelector("#btn-close-apply-cal-dialog").addEventListener("click", closeDialog);
+  dialog.querySelector("#btn-cancel-apply-cal").addEventListener("click", closeDialog);
+
+  dialog.querySelectorAll(".btn-apply-cal-day").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dateStr = btn.getAttribute("data-date");
+      const overwrite = overwriteCheckbox.checked;
+      applyRoutineStepsToDate(routine.steps, dateStr, overwrite ? "overwrite" : "append");
+      closeDialog();
+    });
+  });
+
+  submitCustomBtn.addEventListener("click", () => {
+    const dateStr = customDateInput.value;
+    if (!dateStr) return;
+    const overwrite = overwriteCheckbox.checked;
+    applyRoutineStepsToDate(routine.steps, dateStr, overwrite ? "overwrite" : "append");
+    closeDialog();
+  });
+}
+
 
 
 
