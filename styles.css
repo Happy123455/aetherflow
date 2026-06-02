@@ -1268,7 +1268,7 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 /* ----------------------------------------------------
    Responsive Adjustments
 ---------------------------------------------------- */
-@media (max-width: 1024px) {
+@media (max-width: 979px) {
   body {
     overflow: hidden !important;
     height: 100vh !important;
