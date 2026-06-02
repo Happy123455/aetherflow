@@ -649,6 +649,7 @@ const state = {
 const VIEW_ORDER = ["day", "week", "month", "year", "simulation"];
 
 let activeAssignRoutine = null;
+let isSyncingInProgress = false;
 
 /* ----------------------------------------------------
    Initialization & Event Listeners
@@ -727,6 +728,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupAssignRoutineDialogListeners();
   setupSoundEffectsListeners();
   setupMobileSidebar();
+  setupSyncDialogListeners();
 
   // Setup Zoom Slider Listener
   const zoomSlider = document.getElementById("zoom-slider");
@@ -762,6 +764,71 @@ document.addEventListener("DOMContentLoaded", () => {
   renderUserStats();
   renderActionTemplates();
   updateSuggestions();
+
+  // Background Startup Pull (Stale-While-Revalidate)
+  if (githubSync.isEnabled()) {
+    console.log("Checking for remote sync updates...");
+    githubSync.fetchFile().then(result => {
+      if (result && result.content) {
+        const remoteSyncTime = result.content.syncTime || 0;
+        const localSyncTime = parseInt(localStorage.getItem("aetherflow_sync_time") || "0");
+        if (remoteSyncTime > localSyncTime) {
+          console.log(`Remote data is newer (${remoteSyncTime} > ${localSyncTime}). Applying updates.`);
+          githubSync.applyState(result.content);
+          localStorage.setItem("aetherflow_sync_time", remoteSyncTime);
+          
+          // Reload local states to UI state
+          state.tasks = JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]");
+          state.userStats = JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}');
+          state.groups = JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]");
+          state.collapsedGroups = JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}");
+          
+          const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
+          const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
+          const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
+          const allBuiltins = [
+            ...templates,
+            ...pastTemplates.map(t => ({ ...t, groupId: "group-past", past: true }))
+          ];
+          const filteredBuiltins = allBuiltins.filter(t => !deletedBuiltinIds.includes(t.id)).map(t => {
+            if (modifiedBuiltins[t.id]) return { ...t, ...modifiedBuiltins[t.id] };
+            return t;
+          });
+          state.templates = [...filteredBuiltins, ...JSON.parse(savedCustomTemplates)];
+          
+          // Re-render UI
+          renderCalendar();
+          updateAgendaList();
+          renderUserStats();
+          renderActionTemplates();
+          console.log("Remote updates applied successfully.");
+        } else {
+          console.log("Local data is up to date.");
+        }
+      }
+    }).catch(err => {
+      console.warn("Background startup sync check failed:", err);
+    });
+  }
+
+  // Intercept localStorage.setItem for Auto-Sync
+  const originalSetItem = localStorage.setItem;
+  localStorage.setItem = function(key, value) {
+    originalSetItem.apply(this, arguments);
+    if (typeof isSyncingInProgress !== "undefined" && isSyncingInProgress) return;
+    const SYNC_KEYS = [
+      "aetherflow_tasks",
+      "aetherflow_stats",
+      "aetherflow_custom_templates",
+      "aetherflow_deleted_templates",
+      "aetherflow_modified_builtins",
+      "aetherflow_template_groups",
+      "aetherflow_collapsed_groups"
+    ];
+    if (SYNC_KEYS.includes(key)) {
+      triggerAutoSyncPush();
+    }
+  };
   
   // Start the live time updater (updates the line position every 60s)
   setInterval(() => {
@@ -4721,4 +4788,334 @@ function openAssignRoutineDialog(routine) {
   activeAssignRoutine = routine;
   dialog.showModal();
 }
+
+// GitHub Cloud Sync Helper Object
+const githubSync = {
+  getCredentials() {
+    return {
+      username: localStorage.getItem("aetherflow_sync_username"),
+      repo: localStorage.getItem("aetherflow_sync_repo"),
+      token: localStorage.getItem("aetherflow_sync_token")
+    };
+  },
+  
+  setCredentials(username, repo, token) {
+    localStorage.setItem("aetherflow_sync_username", username);
+    localStorage.setItem("aetherflow_sync_repo", repo);
+    localStorage.setItem("aetherflow_sync_token", token);
+  },
+
+  clearCredentials() {
+    localStorage.removeItem("aetherflow_sync_username");
+    localStorage.removeItem("aetherflow_sync_repo");
+    localStorage.removeItem("aetherflow_sync_token");
+    localStorage.removeItem("aetherflow_sync_time");
+  },
+
+  isEnabled() {
+    const creds = this.getCredentials();
+    return !!(creds.username && creds.repo && creds.token);
+  },
+
+  async fetchFile() {
+    const creds = this.getCredentials();
+    if (!creds.token) throw new Error("No sync token configured");
+
+    const url = `https://api.github.com/repos/${creds.username}/${creds.repo}/contents/data.json`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `token ${creds.token}`,
+        "Accept": "application/vnd.github.v3+json",
+        "Cache-Control": "no-cache"
+      }
+    });
+
+    if (response.status === 404) {
+      return null;
+    }
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.message || "Failed to fetch file from GitHub");
+    }
+
+    const data = await response.json();
+    const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+    return {
+      content: JSON.parse(decodedContent),
+      sha: data.sha
+    };
+  },
+
+  async uploadFile(payloadContent) {
+    const creds = this.getCredentials();
+    if (!creds.token) throw new Error("No sync token configured");
+
+    let sha = null;
+    try {
+      const existing = await this.fetchFile();
+      if (existing) {
+        sha = existing.sha;
+      }
+    } catch (e) {
+      console.log("File not found or error, writing as new:", e);
+    }
+
+    const url = `https://api.github.com/repos/${creds.username}/${creds.repo}/contents/data.json`;
+    const jsonStr = JSON.stringify(payloadContent, null, 2);
+    const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
+
+    const body = {
+      message: "Sync AetherFlow Data",
+      content: base64Content
+    };
+    if (sha) {
+      body.sha = sha;
+    }
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Authorization": `token ${creds.token}`,
+        "Content-Type": "application/json",
+        "Accept": "application/vnd.github.v3+json"
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const errData = await response.json();
+      throw new Error(errData.message || "Failed to push file to GitHub");
+    }
+
+    return await response.json();
+  },
+
+  getLocalState() {
+    return {
+      tasks: JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]"),
+      userStats: JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}'),
+      customTemplates: JSON.parse(localStorage.getItem("aetherflow_custom_templates") || "[]"),
+      deletedTemplates: JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]"),
+      modifiedBuiltins: JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}"),
+      templateGroups: JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]"),
+      collapsedGroups: JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}")
+    };
+  },
+
+  applyState(stateObj) {
+    if (!stateObj) return;
+    isSyncingInProgress = true;
+    try {
+      if (stateObj.tasks) localStorage.setItem("aetherflow_tasks", JSON.stringify(stateObj.tasks));
+      if (stateObj.userStats) localStorage.setItem("aetherflow_stats", JSON.stringify(stateObj.userStats));
+      if (stateObj.customTemplates) localStorage.setItem("aetherflow_custom_templates", JSON.stringify(stateObj.customTemplates));
+      if (stateObj.deletedTemplates) localStorage.setItem("aetherflow_deleted_templates", JSON.stringify(stateObj.deletedTemplates));
+      if (stateObj.modifiedBuiltins) localStorage.setItem("aetherflow_modified_builtins", JSON.stringify(stateObj.modifiedBuiltins));
+      if (stateObj.templateGroups) localStorage.setItem("aetherflow_template_groups", JSON.stringify(stateObj.templateGroups));
+      if (stateObj.collapsedGroups) localStorage.setItem("aetherflow_collapsed_groups", JSON.stringify(stateObj.collapsedGroups));
+    } finally {
+      isSyncingInProgress = false;
+    }
+  }
+};
+
+// Debounced Auto-Sync Trigger
+let syncTimeoutId = null;
+function triggerAutoSyncPush() {
+  if (!githubSync.isEnabled()) return;
+
+  const syncTime = Date.now();
+  localStorage.setItem("aetherflow_sync_time", syncTime);
+
+  if (syncTimeoutId) clearTimeout(syncTimeoutId);
+  syncTimeoutId = setTimeout(async () => {
+    try {
+      console.log("Auto-syncing to GitHub...");
+      const stateObj = githubSync.getLocalState();
+      stateObj.syncTime = syncTime;
+      await githubSync.uploadFile(stateObj);
+      console.log("Auto-sync completed successfully!");
+    } catch (err) {
+      console.warn("Auto-sync failed:", err);
+    }
+  }, 5000);
+}
+
+// Setup Cloud Sync Dialog Listeners
+function setupSyncDialogListeners() {
+  const syncBtn = document.getElementById("btn-cloud-sync");
+  const dialog = document.getElementById("sync-dialog");
+  const closeBtn = document.getElementById("btn-close-sync-dialog");
+  const form = document.getElementById("sync-form");
+  const disconnectBtn = document.getElementById("btn-disconnect-sync");
+  const pullBtn = document.getElementById("btn-pull-sync");
+  const pushBtn = document.getElementById("btn-push-sync");
+
+  if (!dialog || !form) return;
+
+  if (syncBtn) {
+    syncBtn.addEventListener("click", () => {
+      soundEffects.play("click");
+      
+      // Load current credentials to pre-fill
+      const creds = githubSync.getCredentials();
+      document.getElementById("sync-github-username").value = creds.username || "";
+      document.getElementById("sync-github-repo").value = creds.repo || "";
+      document.getElementById("sync-github-token").value = creds.token || "";
+
+      if (githubSync.isEnabled()) {
+        if (disconnectBtn) disconnectBtn.style.display = "block";
+      } else {
+        if (disconnectBtn) disconnectBtn.style.display = "none";
+      }
+
+      dialog.showModal();
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => dialog.close());
+  }
+
+  // Handle Push (Upload) Form Submission
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    soundEffects.play("click");
+
+    const username = document.getElementById("sync-github-username").value.trim();
+    const repo = document.getElementById("sync-github-repo").value.trim();
+    const token = document.getElementById("sync-github-token").value.trim();
+
+    if (!username || !repo || !token) {
+      alert("Please fill in all sync settings fields.");
+      return;
+    }
+
+    const originalText = pushBtn.innerText;
+    pushBtn.disabled = true;
+    pushBtn.innerText = "Syncing...";
+    if (pullBtn) pullBtn.disabled = true;
+
+    try {
+      // Save credentials first so upload can read them
+      githubSync.setCredentials(username, repo, token);
+      
+      // Upload local state
+      const stateObj = githubSync.getLocalState();
+      stateObj.syncTime = Date.now();
+      localStorage.setItem("aetherflow_sync_time", stateObj.syncTime);
+      
+      await githubSync.uploadFile(stateObj);
+      
+      soundEffects.play("success");
+      alert("🏆 Sync Successful! Local database uploaded to your GitHub repository.");
+      dialog.close();
+    } catch (err) {
+      alert(`❌ Sync Failed: ${err.message}`);
+    } finally {
+      pushBtn.disabled = false;
+      pushBtn.innerText = originalText;
+      if (pullBtn) pullBtn.disabled = false;
+    }
+  });
+
+  // Handle Pull (Download) Event
+  if (pullBtn) {
+    pullBtn.addEventListener("click", async () => {
+      soundEffects.play("click");
+      
+      const username = document.getElementById("sync-github-username").value.trim();
+      const repo = document.getElementById("sync-github-repo").value.trim();
+      const token = document.getElementById("sync-github-token").value.trim();
+
+      if (!username || !repo || !token) {
+        alert("Please configure Username, Repo, and Token before pulling data.");
+        return;
+      }
+
+      if (!confirm("Are you sure you want to download remote sync data? This will overwrite your current local calendar data.")) {
+        return;
+      }
+
+      const originalText = pullBtn.innerText;
+      pullBtn.disabled = true;
+      pullBtn.innerText = "Downloading...";
+      if (pushBtn) pushBtn.disabled = true;
+
+      try {
+        githubSync.setCredentials(username, repo, token);
+        const result = await githubSync.fetchFile();
+
+        if (!result || !result.content) {
+          alert("❌ No remote calendar data found. Push from your source device first.");
+          return;
+        }
+
+        // Apply state
+        githubSync.applyState(result.content);
+        if (result.content.syncTime) {
+          localStorage.setItem("aetherflow_sync_time", result.content.syncTime);
+        }
+
+        // Reload data from local storage
+        state.tasks = JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]");
+        state.userStats = JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}');
+        state.groups = JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]");
+        state.collapsedGroups = JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}");
+
+        // Reload templates
+        const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
+        const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
+        const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
+        const allBuiltins = [
+          ...templates,
+          ...pastTemplates.map(t => ({ ...t, groupId: "group-past", past: true }))
+        ];
+        const filteredBuiltins = allBuiltins.filter(t => !deletedBuiltinIds.includes(t.id)).map(t => {
+          if (modifiedBuiltins[t.id]) return { ...t, ...modifiedBuiltins[t.id] };
+          return t;
+        });
+        state.templates = [...filteredBuiltins, ...JSON.parse(savedCustomTemplates)];
+
+        soundEffects.play("success");
+        alert("🏆 Sync Successful! Remote calendar data downloaded and loaded successfully.");
+        
+        triggerViewChange(() => {
+          renderCalendar();
+          updateAgendaList();
+          renderUserStats();
+          renderActionTemplates();
+        });
+
+        dialog.close();
+      } catch (err) {
+        alert(`❌ Pull Failed: ${err.message}`);
+      } finally {
+        pullBtn.disabled = false;
+        pullBtn.innerText = originalText;
+        if (pushBtn) pushBtn.disabled = false;
+      }
+    });
+  }
+
+  // Handle Disconnect Event
+  if (disconnectBtn) {
+    disconnectBtn.addEventListener("click", () => {
+      soundEffects.play("click");
+      if (confirm("Are you sure you want to disconnect sync? This will not delete your data on GitHub or locally, but your devices will stop syncing.")) {
+        githubSync.clearCredentials();
+        document.getElementById("sync-github-username").value = "";
+        document.getElementById("sync-github-repo").value = "";
+        document.getElementById("sync-github-token").value = "";
+        disconnectBtn.style.display = "none";
+        alert("Sync disconnected successfully.");
+        dialog.close();
+      }
+    });
+  }
+}
+
+
 
