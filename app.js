@@ -1189,9 +1189,12 @@ function renderDayView(parent) {
     const targetDate = dayCol.getAttribute("data-date");
 
     if (isDailyRoutine) {
+      const monday = getStartOfWeek(state.currentDate);
       promptApplyRoutine(routineData.title, (choice) => {
-        if (choice !== "cancel") {
+        if (choice === "overwrite" || choice === "append") {
           applyRoutineStepsToDate(routineData.steps, targetDate, choice);
+        } else if (choice === "week-overwrite" || choice === "week-append") {
+          applyRoutineToEntireWeek(routineData.steps, monday, choice === "week-overwrite" ? "overwrite" : "append");
         }
       });
       return;
@@ -1267,6 +1270,41 @@ function renderWeekView(parent) {
   const spacer = document.createElement("div");
   spacer.className = "header-time-spacer";
   headers.appendChild(spacer);
+  
+  // HTML5 Drag and Drop Events on Week View headers (Drop to apply routine to entire week!)
+  headers.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    headers.classList.add("drag-over-week");
+  });
+  
+  headers.addEventListener("dragleave", () => {
+    headers.classList.remove("drag-over-week");
+  });
+  
+  headers.addEventListener("drop", (e) => {
+    e.preventDefault();
+    headers.classList.remove("drag-over-week");
+    
+    const dropDataStr = e.dataTransfer.getData("text/plain");
+    let isDailyRoutine = false;
+    let routineData = null;
+    try {
+      const parsed = JSON.parse(dropDataStr);
+      if (parsed && parsed.type === "daily-routine") {
+        isDailyRoutine = true;
+        routineData = parsed;
+      }
+    } catch (err) {}
+    
+    if (isDailyRoutine) {
+      soundEffects.play("swoosh");
+      promptApplyRoutineToWeek(routineData.title, (choice) => {
+        if (choice !== "cancel") {
+          applyRoutineToEntireWeek(routineData.steps, monday, choice);
+        }
+      });
+    }
+  });
   
   const daysOfWeek = [];
   for (let i = 0; i < 7; i++) {
@@ -1377,8 +1415,10 @@ function renderWeekView(parent) {
 
       if (isDailyRoutine) {
         promptApplyRoutine(routineData.title, (choice) => {
-          if (choice !== "cancel") {
+          if (choice === "overwrite" || choice === "append") {
             applyRoutineStepsToDate(routineData.steps, targetDate, choice);
+          } else if (choice === "week-overwrite" || choice === "week-append") {
+            applyRoutineToEntireWeek(routineData.steps, monday, choice === "week-overwrite" ? "overwrite" : "append");
           }
         });
         return;
@@ -5276,14 +5316,20 @@ function promptApplyRoutine(routineTitle, onChoice) {
       </div>
       <div style="padding: 1rem 1.5rem 1.5rem 1.5rem;">
         <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.25rem;">
-          How would you like to apply <strong>${routineTitle}</strong> to this day?
+          How would you like to apply <strong>${routineTitle}</strong>?
         </p>
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <button type="button" class="btn btn-primary" id="btn-apply-overwrite" style="padding: 0.75rem;">
-            💥 Overwrite (Clear existing tasks)
+            💥 Overwrite (This Day)
           </button>
           <button type="button" class="btn btn-secondary" id="btn-apply-append" style="padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-card);">
-            ➕ Append (Keep existing tasks)
+            ➕ Append (This Day)
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-apply-week-overwrite" style="padding: 0.75rem; background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); border: none;">
+            📅 Apply to Entire Week (Overwrite)
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-apply-week-append" style="padding: 0.75rem; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: #c084fc;">
+            📅 Apply to Entire Week (Append)
           </button>
           <button type="button" class="btn" id="btn-apply-cancel" style="padding: 0.5rem; margin-top: 10px; background: transparent; color: var(--text-muted);">
             Cancel
@@ -5311,11 +5357,132 @@ function promptApplyRoutine(routineTitle, onChoice) {
     onChoice("append");
   });
 
+  dialog.querySelector("#btn-apply-week-overwrite").addEventListener("click", () => {
+    soundEffects.play("success");
+    dialog.close();
+    dialog.remove();
+    onChoice("week-overwrite");
+  });
+
+  dialog.querySelector("#btn-apply-week-append").addEventListener("click", () => {
+    soundEffects.play("click");
+    dialog.close();
+    dialog.remove();
+    onChoice("week-append");
+  });
+
   dialog.querySelector("#btn-apply-cancel").addEventListener("click", () => {
     soundEffects.play("click");
     dialog.close();
     dialog.remove();
     onChoice("cancel");
+  });
+}
+
+// Custom Premium Dialog to prompt user when dropping directly onto Week headers (Apply to Entire Week)
+function promptApplyRoutineToWeek(routineTitle, onChoice) {
+  const existing = document.getElementById("apply-routine-prompt-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "apply-routine-prompt-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "400px";
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i data-lucide="calendar-days" style="color:var(--primary);width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Apply to Entire Week</h3>
+      </div>
+      <div style="padding: 1rem 1.5rem 1.5rem 1.5rem;">
+        <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.25rem;">
+          How would you like to apply <strong>${routineTitle}</strong> to every day this week?
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="btn btn-primary" id="btn-apply-week-overwrite" style="padding: 0.75rem; background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); border: none;">
+            💥 Overwrite All Days (Clear week tasks)
+          </button>
+          <button type="button" class="btn btn-secondary" id="btn-apply-week-append" style="padding: 0.75rem; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.3); color: #c084fc;">
+            ➕ Append to All Days (Keep week tasks)
+          </button>
+          <button type="button" class="btn" id="btn-apply-cancel" style="padding: 0.5rem; margin-top: 10px; background: transparent; color: var(--text-muted);">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  lucide.createIcons();
+
+  dialog.showModal();
+
+  dialog.querySelector("#btn-apply-week-overwrite").addEventListener("click", () => {
+    soundEffects.play("success");
+    dialog.close();
+    dialog.remove();
+    onChoice("overwrite");
+  });
+
+  dialog.querySelector("#btn-apply-week-append").addEventListener("click", () => {
+    soundEffects.play("click");
+    dialog.close();
+    dialog.remove();
+    onChoice("append");
+  });
+
+  dialog.querySelector("#btn-apply-cancel").addEventListener("click", () => {
+    soundEffects.play("click");
+    dialog.close();
+    dialog.remove();
+    onChoice("cancel");
+  });
+}
+
+// Apply steps of a daily routine to all 7 days of the viewed week
+function applyRoutineToEntireWeek(steps, startOfWeekDate, mode) {
+  if (mode === "cancel") return;
+  
+  // Generate date strings for all 7 days of the week
+  const weekDates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeekDate);
+    d.setDate(startOfWeekDate.getDate() + i);
+    weekDates.push(getFormattedDateStr(d));
+  }
+  
+  if (mode === "overwrite") {
+    // Remove existing tasks for all dates in this week
+    state.tasks = state.tasks.filter(t => !weekDates.includes(t.date));
+  }
+  
+  // Create new tasks for each day of the week
+  weekDates.forEach(targetDate => {
+    steps.forEach(step => {
+      const newTask = {
+        id: generateUUID(),
+        title: step.title,
+        description: `Routine Block: ${step.title}`,
+        date: targetDate,
+        startTime: step.time || "09:00",
+        duration: step.duration || 30,
+        category: step.category || "other",
+        completed: false,
+        xp: step.xp !== undefined ? step.xp : 20,
+        stress: step.stress !== undefined ? step.stress : 5,
+        value: step.value !== undefined ? step.value : 0
+      };
+      state.tasks.push(newTask);
+    });
+  });
+  
+  // Save to local storage
+  localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+  
+  // Re-render calendar UI
+  triggerViewChange(() => {
+    renderCalendar();
+    updateAgendaList();
+    renderUserStats();
   });
 }
 
@@ -5419,6 +5586,10 @@ function openApplyRoutineCalendarDialog(routine) {
           Week of ${new Date(weekDates[0]).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
         </p>
         
+        <button type="button" class="btn" id="btn-apply-entire-week" style="width: 100%; padding: 0.85rem; margin-bottom: 1rem; background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%); border: none; border-radius: 10px; color: white; font-weight: 600; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(168,85,247,0.3);">
+          <i data-lucide="calendar-range" style="width:16px;height:16px;"></i> Apply to Entire Week
+        </button>
+
         <div class="weekday-buttons-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
           ${buttonsHtml}
         </div>
@@ -5492,6 +5663,15 @@ function openApplyRoutineCalendarDialog(routine) {
 
   dialog.querySelector("#btn-close-apply-cal-dialog").addEventListener("click", closeDialog);
   dialog.querySelector("#btn-cancel-apply-cal").addEventListener("click", closeDialog);
+
+  // Apply to Entire Week button
+  dialog.querySelector("#btn-apply-entire-week").addEventListener("click", () => {
+    soundEffects.play("click");
+    closeDialog();
+    const overwrite = overwriteCheckbox.checked;
+    const monday = new Date(weekDates[0]);
+    applyRoutineToEntireWeek(routine.steps, monday, overwrite ? "overwrite" : "append");
+  });
 
   dialog.querySelectorAll(".btn-apply-cal-day").forEach(btn => {
     btn.addEventListener("click", () => {

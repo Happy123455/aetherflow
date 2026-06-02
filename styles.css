@@ -390,9 +390,11 @@ body {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .agenda-time {
@@ -759,9 +761,12 @@ body {
 .task-card-title {
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
+  line-height: 1.3;
 }
 
 .task-card-time {
@@ -889,9 +894,11 @@ body {
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: 500;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
   border-left: 2px solid var(--cat-color);
 }
 .month-mini-task.cat-work {
@@ -1760,9 +1767,11 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .card-metrics {
@@ -1856,9 +1865,11 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .suggested-card-metrics {
@@ -2837,9 +2848,11 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 .sim-day-routine-title {
   color: white;
   font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
   margin-bottom: 4px;
 }
 
@@ -2889,10 +2902,13 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 
 .sim-day-step-mini-title {
   font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 90px;
+  word-break: break-word;
+  max-width: none;
+  flex: 1;
 }
 
 .sim-day-step-mini-time {
@@ -3109,4 +3125,23 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 .templates-tab-btn:hover:not(.active) {
   color: white !important;
   background: rgba(255, 255, 255, 0.03);
+}
+
+/* Drag and Drop visual feedback for Week View headers */
+.view-grid-headers.drag-over-week {
+  background: rgba(168, 85, 247, 0.15) !important;
+  border-radius: 8px;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.4) inset;
+  transition: all 0.2s ease;
+}
+
+/* Medium Viewport Sidebar Scaling Optimization */
+@media (min-width: 900px) and (max-width: 1199px) {
+  :root {
+    --sidebar-width: 260px;
+  }
+  .app-sidebar {
+    padding: 16px;
+    gap: 16px;
+  }
 }
