@@ -5377,7 +5377,7 @@ function openApplyRoutineCalendarDialog(routine) {
   for (let i = 0; i < 7; i++) {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
-    weekDates.push(d.toISOString().split("T")[0]);
+    weekDates.push(getFormattedDateStr(d));
   }
 
   const existing = document.getElementById("apply-routine-calendar-dialog");
