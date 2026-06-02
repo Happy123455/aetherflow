@@ -4821,13 +4821,13 @@ const githubSync = {
     const creds = this.getCredentials();
     if (!creds.token) throw new Error("No sync token configured");
 
-    const url = `https://api.github.com/repos/${creds.username}/${creds.repo}/contents/data.json`;
+    // Add cache buster to URL to prevent browser caching stale 404s
+    const url = `https://api.github.com/repos/${creds.username}/${creds.repo}/contents/data.json?t=${Date.now()}`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
         "Authorization": `token ${creds.token}`,
-        "Accept": "application/vnd.github.v3+json",
-        "Cache-Control": "no-cache"
+        "Accept": "application/vnd.github.v3+json"
       }
     });
 
@@ -4841,9 +4841,18 @@ const githubSync = {
     }
 
     const data = await response.json();
-    const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+    let contentObj = null;
+    try {
+      if (data.content) {
+        const decodedContent = decodeURIComponent(escape(atob(data.content.replace(/\s/g, ''))));
+        contentObj = JSON.parse(decodedContent);
+      }
+    } catch (parseErr) {
+      console.warn("Failed to decode or parse existing data.json content from GitHub:", parseErr);
+    }
+
     return {
-      content: JSON.parse(decodedContent),
+      content: contentObj,
       sha: data.sha
     };
   },
@@ -4859,7 +4868,7 @@ const githubSync = {
         sha = existing.sha;
       }
     } catch (e) {
-      console.log("File not found or error, writing as new:", e);
+      console.error("Error checking existing file SHA:", e);
     }
 
     const url = `https://api.github.com/repos/${creds.username}/${creds.repo}/contents/data.json`;
