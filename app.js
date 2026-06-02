@@ -2357,10 +2357,6 @@ function renderActionTemplates() {
   const actions = document.querySelector(".templates-widget .widget-header-actions");
   if (actions) actions.style.display = "flex";
 
-  // Gather templates (active custom/built-in + past templates)
-  const searchInput = document.getElementById("templates-search-input");
-  const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
-
   // Prepare templates with correct groupId
   const allTpls = state.templates.map(t => ({ ...t, groupId: t.groupId || "group-academic" }));
 
