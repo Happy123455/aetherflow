@@ -67,7 +67,7 @@
     }
   ],
   "userStats": {
-    "xp": 120,
+    "xp": 1,
     "level": 1,
     "stress": 30,
     "value": 50
@@ -102,5 +102,5 @@
     }
   ],
   "collapsedGroups": {},
-  "syncTime": 1780403129289
+  "syncTime": 1780403678877
 }
