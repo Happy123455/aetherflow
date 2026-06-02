@@ -1,0 +1,106 @@
+{
+  "tasks": [
+    {
+      "id": "mock-1",
+      "title": "🎨 Review Dashboard UI Design",
+      "description": "Go over visual style, color palettes, and glassmorphic aesthetics with the team.",
+      "date": "2026-06-02",
+      "startTime": "09:30",
+      "duration": 60,
+      "category": "work",
+      "completed": false,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
+    },
+    {
+      "id": "mock-2",
+      "title": "⚡ Core Team Sync",
+      "description": "Align on tasks, weekly roadmap, and feature goals.",
+      "date": "2026-06-02",
+      "startTime": "11:00",
+      "duration": 45,
+      "category": "work",
+      "completed": false,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
+    },
+    {
+      "id": "mock-3",
+      "title": "🥗 Lunch with Sarah",
+      "description": "Catch up at the botanical cafe.",
+      "date": "2026-06-02",
+      "startTime": "12:30",
+      "duration": 60,
+      "category": "personal",
+      "completed": false,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
+    },
+    {
+      "id": "mock-4",
+      "title": "🏃‍♂️ Cardio Workout",
+      "description": "Run 5k and quick stretching session.",
+      "date": "2026-06-02",
+      "startTime": "16:00",
+      "duration": 45,
+      "category": "health",
+      "completed": false,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
+    },
+    {
+      "id": "mock-5",
+      "title": "🌌 Read Science Paper",
+      "description": "Review recent findings on biological networks.",
+      "date": "2026-06-03",
+      "startTime": "14:00",
+      "duration": 90,
+      "category": "other",
+      "completed": false,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
+    }
+  ],
+  "userStats": {
+    "xp": 120,
+    "level": 1,
+    "stress": 30,
+    "value": 50
+  },
+  "customTemplates": [],
+  "deletedTemplates": [],
+  "modifiedBuiltins": {},
+  "templateGroups": [
+    {
+      "id": "group-academic",
+      "title": "🧠 Academic Recall & Prep"
+    },
+    {
+      "id": "group-breaks",
+      "title": "🥪 Focus Breaks & Refreshments"
+    },
+    {
+      "id": "group-wellness",
+      "title": "🧘 Physical Wellness"
+    },
+    {
+      "id": "group-gaming",
+      "title": "🎮 Entertainment & Gaming"
+    },
+    {
+      "id": "group-chores",
+      "title": "🧹 Household Chores"
+    },
+    {
+      "id": "group-past",
+      "title": "⏳ Past Routines"
+    }
+  ],
+  "collapsedGroups": {},
+  "syncTime": 1780403129289
+}
