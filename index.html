@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AetherFlow // Productivity Hub & Calendar</title>
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-container">
+    
+    <!-- Sidebar -->
+    <aside class="app-sidebar" aria-label="Sidebar Widgets">
+      <!-- Branding -->
+      <div class="brand">
+        <div class="brand-logo">
+          <div class="logo-orb"></div>
+        </div>
+        <div class="brand-text">
+          <h1>AetherFlow</h1>
+          <span>Productivity System</span>
+        </div>
+      </div>
+
+      <!-- User Profile & Gamified Stats -->
+      <section class="widget profile-widget" aria-label="User Level and Stats">
+        <div class="profile-header">
+          <div class="level-badge">Lvl <span id="user-level">1</span></div>
+          <div class="xp-container">
+            <span id="xp-text">150 / 1000 XP</span>
+            <div class="xp-bar-bg">
+              <div class="xp-bar-fill" id="xp-fill" style="width: 15%;"></div>
+            </div>
+          </div>
+          <button type="button" class="btn btn-icon btn-secondary" id="btn-edit-stats" title="Edit Profile Stats" style="width: 26px; height: 26px; border-radius: 6px; padding: 0; flex-shrink: 0; margin-left: 8px;">
+            <i data-lucide="edit-2" style="width:12px;height:12px;"></i>
+          </button>
+        </div>
+        <div class="stats-meters">
+          <div class="stat-meter-item">
+            <div class="stat-label">
+              <span><i data-lucide="flame" style="color:#ef4444;width:12px;height:12px;display:inline-block;vertical-align:middle;"></i> Stress Level</span>
+              <span id="stress-text">45%</span>
+            </div>
+            <div class="meter-bar-bg">
+              <div class="meter-bar-fill stress-fill" id="stress-fill" style="width: 45%;"></div>
+            </div>
+          </div>
+          <div class="stat-meter-item">
+            <div class="stat-label">
+              <span><i data-lucide="dollar-sign" style="color:#10b981;width:12px;height:12px;display:inline-block;vertical-align:middle;"></i> Value Generated</span>
+              <span id="value-text" class="value-ticker">$50.00</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Add Button -->
+      <button class="btn btn-primary" id="btn-quick-add" aria-label="Create New Task">
+        <i data-lucide="plus"></i>
+        <span>New Event / Task</span>
+      </button>
+
+      <!-- Pomodoro Widget -->
+      <section class="widget pomodoro-widget" aria-label="Pomodoro Focus Timer">
+        <div class="widget-header">
+          <h3><i data-lucide="timer"></i> Focus Session</h3>
+          <span class="timer-mode" id="pomodoro-mode">Work</span>
+        </div>
+        <div class="pomodoro-circle-container">
+          <svg class="progress-ring" width="120" height="120">
+            <circle class="progress-ring-bg" stroke="rgba(255,255,255,0.05)" stroke-width="6" fill="transparent" r="52" cx="60" cy="60"/>
+            <circle class="progress-ring-circle" id="pomodoro-progress" stroke="url(#timer-gradient)" stroke-width="6" stroke-linecap="round" fill="transparent" r="52" cx="60" cy="60"/>
+            <defs>
+              <linearGradient id="timer-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#6366f1" />
+                <stop offset="100%" stop-color="#a855f7" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="timer-display" id="timer-time" role="timer" aria-live="off">25:00</div>
+        </div>
+        <div class="timer-controls">
+          <button class="btn btn-icon" id="btn-timer-toggle" aria-label="Start Timer">
+            <i data-lucide="play"></i>
+          </button>
+          <button class="btn btn-icon btn-secondary" id="btn-timer-reset" aria-label="Reset Timer">
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+        </div>
+      </section>
+
+      <!-- Category Filter Widget -->
+      <section class="widget category-widget" aria-label="Task Categories">
+        <div class="widget-header">
+          <h3><i data-lucide="layers"></i> Categories</h3>
+        </div>
+        <div class="category-list">
+          <label class="category-item" style="--category-color: #6366f1;">
+            <input type="checkbox" checked value="work" id="filter-work">
+            <span class="checkbox-custom"></span>
+            <span class="category-name">Work</span>
+          </label>
+          <label class="category-item" style="--category-color: #ec4899;">
+            <input type="checkbox" checked value="personal" id="filter-personal">
+            <span class="checkbox-custom"></span>
+            <span class="category-name">Personal</span>
+          </label>
+          <label class="category-item" style="--category-color: #10b981;">
+            <input type="checkbox" checked value="health" id="filter-health">
+            <span class="checkbox-custom"></span>
+            <span class="category-name">Health & Sport</span>
+          </label>
+          <label class="category-item" style="--category-color: #f59e0b;">
+            <input type="checkbox" checked value="other" id="filter-other">
+            <span class="checkbox-custom"></span>
+            <span class="category-name">Other</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- Routine Saves Widget -->
+      <section class="widget routines-widget" aria-label="Routine Saves Manager">
+        <div class="widget-header">
+          <h3><i data-lucide="archive" style="color:#a855f7;width:16px;height:16px;"></i> Routine Saves</h3>
+        </div>
+        <div class="routines-controls">
+          <select id="routine-variation-select" class="routine-select">
+            <option value="default">— Default Schedule —</option>
+          </select>
+          <div class="routine-btns-row">
+            <button class="btn btn-secondary" id="btn-save-routine" title="Save current schedule as a custom variation">
+              <i data-lucide="save" style="width:12px;height:12px;"></i> Save
+            </button>
+            <button class="btn btn-danger" id="btn-revert-routine" title="Revert schedule to default preset">
+              <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Revert
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Action Block Templates (Draggable) -->
+      <section class="widget templates-widget" aria-label="Draggable Action Templates">
+        <div class="widget-header">
+          <h3><i data-lucide="layout-grid"></i> Action Blocks</h3>
+          <div class="widget-header-actions" style="display: flex; gap: 6px;">
+            <button class="btn btn-icon btn-secondary" id="btn-add-group" title="Create Custom Group" style="width:26px;height:26px;border-radius:6px;padding:0;">
+              <i data-lucide="folder-plus" style="width:14px;height:14px;"></i>
+            </button>
+            <button class="btn btn-icon btn-secondary" id="btn-add-template" title="Create Custom Action Block" style="width:26px;height:26px;border-radius:6px;padding:0;">
+              <i data-lucide="plus" style="width:14px;height:14px;"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="templates-search-container">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="templates-search-input" placeholder="Search action blocks..." autocomplete="off">
+          <button type="button" id="btn-clear-search" class="btn-clear-search hidden" title="Clear Search">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        
+        <div class="templates-list" id="templates-container">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Smart Recommendations Engine Widget -->
+      <section class="widget suggestions-widget" aria-label="AI Co-pilot Suggestions">
+        <div class="widget-header">
+          <h3><i data-lucide="sparkles" style="color:#f59e0b;fill:rgba(245,158,11,0.2);"></i> Co-pilot Suggestions</h3>
+        </div>
+        <div class="suggestions-content">
+          <p class="suggestion-intro" id="suggestion-intro">Analyzing current metrics...</p>
+          <div class="suggested-actions-list" id="suggestions-list-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Upcoming Agenda Widget -->
+      <section class="widget agenda-widget" aria-label="Today's Agenda">
+        <div class="widget-header">
+          <h3><i data-lucide="calendar-check"></i> Today's Agenda</h3>
+        </div>
+        <div class="agenda-list" id="agenda-container">
+          <!-- Populated by JS -->
+          <div class="empty-state">No events for today.</div>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Main Board -->
+    <main class="app-main">
+      <!-- Top Navigation & Dashboard Controls -->
+      <header class="main-header">
+        <!-- Navigation Buttons -->
+        <div class="header-nav">
+          <button class="btn btn-icon btn-toggle-sidebar" id="btn-toggle-sidebar" aria-label="Toggle Sidebar Menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <button class="btn btn-icon" id="btn-prev" aria-label="Previous Period">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <button class="btn btn-secondary" id="btn-today" aria-label="Go to Today">Today</button>
+          <button class="btn btn-icon" id="btn-next" aria-label="Next Period">
+            <i data-lucide="chevron-right"></i>
+          </button>
+          
+          <!-- Zoom Grid Slider -->
+          <div class="zoom-slider-container" title="Adjust Calendar Slots Height">
+            <i data-lucide="scaling" style="width:14px;height:14px;color:var(--text-muted);"></i>
+            <input type="range" id="zoom-slider" min="40" max="240" value="80">
+          </div>
+          
+          <h2 class="active-range-label" id="current-range-label" aria-live="polite">June 2026</h2>
+        </div>
+
+        <!-- View Selector Mode (Day, Week, Month, Year, Simulation) -->
+        <nav class="view-selector-nav" aria-label="Calendar view selectors">
+          <div class="view-selector-wrapper">
+            <button class="btn-view" data-view="day" id="btn-view-day">Day</button>
+            <button class="btn-view active" data-view="week" id="btn-view-week">Week</button>
+            <button class="btn-view" data-view="month" id="btn-view-month">Month</button>
+            <button class="btn-view" data-view="year" id="btn-view-year">Year</button>
+            <button class="btn-view" data-view="simulation" id="btn-view-simulation">Simulate</button>
+            <!-- Highlight bar behind the active button -->
+            <div class="view-indicator-pill" id="view-indicator"></div>
+          </div>
+        </nav>
+      </header>
+
+      <!-- Calendar Container -->
+      <div class="calendar-viewport" id="calendar-viewport">
+        <!-- Dynamic calendar grid is rendered inside this container -->
+        <div class="calendar-grid-wrapper" id="calendar-container">
+          <!-- Rendered layout goes here -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Task Dialog Modals (Native HTML <dialog>) -->
+  <dialog class="task-modal" id="task-dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="dialog-title">New Event / Task</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="task-form" method="dialog">
+        <!-- Hidden input for task ID during edit -->
+        <input type="hidden" id="task-id">
+        
+        <div class="form-group">
+          <label for="task-title">Event Title</label>
+          <input type="text" id="task-title" required placeholder="e.g. Design Sync & Review" autocomplete="off">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-date">Date</label>
+            <input type="date" id="task-date" required>
+          </div>
+          <div class="form-group">
+            <label for="task-time">Start Time</label>
+            <input type="time" id="task-time" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-duration">Duration (Minutes)</label>
+            <select id="task-duration">
+              <option value="15">15 min</option>
+              <option value="30">30 min</option>
+              <option value="45">45 min</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+              <option value="180">3 hours</option>
+              <option value="240">4 hours</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="task-category">Category</label>
+            <select id="task-category">
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+              <option value="health">Health & Sport</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="task-desc">Description</label>
+          <textarea id="task-desc" rows="3" placeholder="Add details or notes..."></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-danger hidden" id="btn-delete-task">Delete</button>
+          <div class="footer-right-buttons">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-dialog">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-task">Save Event</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Template Creator Dialog -->
+  <dialog class="task-modal" id="template-dialog" aria-modal="true" aria-labelledby="template-dialog-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="template-dialog-title">Create Action Block</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-template-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="template-form" method="dialog">
+        <div class="form-group">
+          <label for="tpl-title">Block Title</label>
+          <input type="text" id="tpl-title" required placeholder="e.g. 🧘 Yoga Session" autocomplete="off">
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tpl-category">Category</label>
+            <select id="tpl-category">
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+              <option value="health">Health & Sport</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="tpl-group">Action Group</label>
+            <select id="tpl-group" required></select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tpl-duration">Duration (Minutes)</label>
+            <div class="stepper-input-group">
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-duration', -15)">-</button>
+              <input type="number" id="tpl-duration" min="5" max="480" value="60" required>
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-duration', 15)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tpl-xp">XP Reward</label>
+            <div class="stepper-input-group">
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-xp', -10)">-</button>
+              <input type="number" id="tpl-xp" min="0" max="500" value="30" required>
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-xp', 10)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="tpl-stress">Stress Adjustment</label>
+            <div class="stepper-input-group">
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-stress', -5)">-</button>
+              <input type="number" id="tpl-stress" min="-100" max="100" value="10" required>
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-stress', 5)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="tpl-value">Value Generated ($)</label>
+            <div class="stepper-input-group">
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-value', -25)">-</button>
+              <input type="number" id="tpl-value" min="-1000" max="1000" value="0" required>
+              <button type="button" class="btn-step" onclick="adjustInput('tpl-value', 25)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="footer-right-buttons">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-template-dialog">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-template">Create Block</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Stats Editor Dialog -->
+  <dialog class="task-modal" id="stats-dialog" aria-modal="true" aria-labelledby="stats-dialog-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="stats-dialog-title">Edit Profile Stats</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-stats-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="stats-form" method="dialog">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stats-level">Level</label>
+            <input type="number" id="stats-level" min="1" max="100" required>
+          </div>
+          <div class="form-group">
+            <label for="stats-xp">XP (0 - 999)</label>
+            <input type="number" id="stats-xp" min="0" max="999" required>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stats-stress">Stress (%)</label>
+            <input type="number" id="stats-stress" min="0" max="100" required>
+          </div>
+          <div class="form-group">
+            <label for="stats-value">Value Generated ($)</label>
+            <input type="number" id="stats-value" step="0.01" required>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <div class="footer-right-buttons">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-stats-dialog">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-stats">Save Stats</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Group Creator Dialog -->
+  <dialog class="task-modal" id="group-dialog" aria-modal="true" aria-labelledby="group-dialog-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="group-dialog-title">Create / Edit Group</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-group-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="group-form" method="dialog">
+        <input type="hidden" id="group-id">
+        <div class="form-group">
+          <label for="group-title">Group Name</label>
+          <input type="text" id="group-title" required placeholder="e.g. 🎒 Routines & Chores" autocomplete="off">
+        </div>
+        <div class="modal-footer">
+          <div class="footer-right-buttons">
+            <button type="button" class="btn btn-secondary" id="btn-cancel-group-dialog">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit-group">Save Group</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Weekday Routine Assigner Dialog -->
+  <dialog class="task-modal" id="assign-routine-dialog" aria-modal="true" aria-labelledby="assign-routine-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="assign-routine-title"><i data-lucide="calendar-days" style="color:var(--primary);width:18px;height:18px;vertical-align:middle;margin-right:6px;"></i> Assign Routine</h3>
+        <button class="btn btn-icon btn-close" id="btn-close-assign-dialog" aria-label="Close Dialog">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body" style="padding: 1rem 1.5rem 1.5rem 1.5rem;">
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;">Select the day you want to assign this routine to:</p>
+        <div class="weekday-buttons-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1rem;">
+          <button class="btn btn-secondary btn-assign-day" data-day-index="0" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Monday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="1" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Tuesday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="2" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Wednesday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="3" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Thursday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="4" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Friday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="5" style="padding: 0.75rem; justify-content: center; font-weight: 500;">Saturday</button>
+          <button class="btn btn-secondary btn-assign-day" data-day-index="6" style="padding: 0.75rem; justify-content: center; font-weight: 500; grid-column: span 2;">Sunday</button>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-assign-dialog" style="padding: 0.5rem 1.25rem;">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Floating Tooltip Card -->
+  <div class="calendar-tooltip hidden" id="calendar-tooltip" role="tooltip"></div>
+
+  <!-- JS Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
