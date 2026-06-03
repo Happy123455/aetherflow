@@ -165,6 +165,99 @@ const soundEffects = {
   }
 };
 
+/* ----------------------------------------------------
+   Custom Modal Dialog Utilities (Android WebView Compatible)
+   Replaces native prompt(), confirm(), alert() which
+   may be blocked or broken in Android WebView/PWA
+---------------------------------------------------- */
+function showAppAlert(message, onClose) {
+  const existing = document.getElementById("app-custom-alert-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "app-custom-alert-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "380px";
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div style="padding: 1.5rem;">
+        <p style="color: var(--text-main); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem; word-break: break-word;">${message}</p>
+        <div style="display: flex; justify-content: flex-end;">
+          <button type="button" class="btn btn-primary" id="btn-app-alert-ok" style="padding: 0.5rem 1.5rem;">OK</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.showModal();
+
+  const closeIt = () => { dialog.close(); dialog.remove(); if (onClose) onClose(); };
+  dialog.querySelector("#btn-app-alert-ok").addEventListener("click", closeIt);
+  dialog.addEventListener("cancel", closeIt);
+}
+
+function showAppConfirm(message, onResult) {
+  const existing = document.getElementById("app-custom-confirm-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "app-custom-confirm-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "400px";
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div style="padding: 1.5rem;">
+        <p style="color: var(--text-main); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1.25rem; word-break: break-word;">${message}</p>
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-secondary" id="btn-app-confirm-cancel" style="padding: 0.5rem 1.25rem;">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-app-confirm-ok" style="padding: 0.5rem 1.25rem;">Confirm</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.showModal();
+
+  const close = (result) => { dialog.close(); dialog.remove(); onResult(result); };
+  dialog.querySelector("#btn-app-confirm-ok").addEventListener("click", () => close(true));
+  dialog.querySelector("#btn-app-confirm-cancel").addEventListener("click", () => close(false));
+  dialog.addEventListener("cancel", () => close(false));
+}
+
+function showAppPrompt(message, defaultValue, onResult) {
+  const existing = document.getElementById("app-custom-prompt-dialog");
+  if (existing) existing.remove();
+
+  const dialog = document.createElement("dialog");
+  dialog.id = "app-custom-prompt-dialog";
+  dialog.className = "task-modal";
+  dialog.style.maxWidth = "420px";
+  dialog.innerHTML = `
+    <div class="modal-content">
+      <div style="padding: 1.5rem;">
+        <p style="color: var(--text-main); font-size: 0.9rem; line-height: 1.5; margin-bottom: 1rem; word-break: break-word;">${message}</p>
+        <input type="text" id="app-prompt-input" value="${defaultValue || ''}" placeholder="Enter name..." style="width: 100%; padding: 0.65rem 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-card); color: white; font-size: 0.9rem; margin-bottom: 1.25rem; outline: none;" />
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+          <button type="button" class="btn btn-secondary" id="btn-app-prompt-cancel" style="padding: 0.5rem 1.25rem;">Cancel</button>
+          <button type="button" class="btn btn-primary" id="btn-app-prompt-ok" style="padding: 0.5rem 1.25rem;">Save</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(dialog);
+  dialog.showModal();
+
+  const inputEl = dialog.querySelector("#app-prompt-input");
+  inputEl.focus();
+  inputEl.select();
+
+  const close = (value) => { dialog.close(); dialog.remove(); onResult(value); };
+  dialog.querySelector("#btn-app-prompt-ok").addEventListener("click", () => close(inputEl.value));
+  dialog.querySelector("#btn-app-prompt-cancel").addEventListener("click", () => close(null));
+  inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") close(inputEl.value); });
+  dialog.addEventListener("cancel", () => close(null));
+}
+
 // Default mock tasks to make the board beautiful on first load
 
 // Default mock tasks to make the board beautiful on first load
@@ -2090,7 +2183,7 @@ function triggerPomodoroSessionComplete() {
     state.pomodoro.duration = 5 * 60;
     
     // Play alert sound if available
-    alert("Time to take a break!");
+    showAppAlert("⏰ Time to take a break!");
   } else {
     state.pomodoro.mode = "work";
     document.getElementById("pomodoro-mode").innerText = "Work";
@@ -2098,7 +2191,7 @@ function triggerPomodoroSessionComplete() {
     document.getElementById("pomodoro-mode").style.color = "#818cf8";
     state.pomodoro.duration = 25 * 60;
     
-    alert("Break finished, time to focus!");
+    showAppAlert("🎯 Break finished, time to focus!");
   }
   
   state.pomodoro.timeLeft = state.pomodoro.duration;
@@ -2976,7 +3069,7 @@ function claimRewards(task, cardElement) {
     
     if (leveledUp) {
       setTimeout(() => {
-        alert(`🏆 LEVEL UP! You reached Level ${state.userStats.level}! Keep focus!`);
+        showAppAlert(`🏆 LEVEL UP! You reached Level ${state.userStats.level}! Keep focus!`);
       }, 600);
     }
   } else {
@@ -3553,9 +3646,11 @@ function renderScenarioSelector(parent) {
     deleteBtn.title = "Delete Custom Simulation Variation";
     deleteBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (confirm(`Are you sure you want to delete the simulation variation "${simVar.name}"?`)) {
-        deleteCustomSimulationVariation(simVar.id);
-      }
+      showAppConfirm(`Are you sure you want to delete the simulation variation "${simVar.name}"?`, (confirmed) => {
+        if (confirmed) {
+          deleteCustomSimulationVariation(simVar.id);
+        }
+      });
     });
     btnRow.appendChild(deleteBtn);
 
@@ -3750,7 +3845,37 @@ function renderActiveSimulationDashboard(parent) {
       
       soundEffects.play("swoosh");
       
-      const templateId = e.dataTransfer.getData("text/plain");
+      const dropDataStr = e.dataTransfer.getData("text/plain");
+      
+      // Check if it's a Daily Routine drop (JSON with type: "daily-routine")
+      let isDailyRoutine = false;
+      let routineData = null;
+      try {
+        const parsed = JSON.parse(dropDataStr);
+        if (parsed && parsed.type === "daily-routine") {
+          isDailyRoutine = true;
+          routineData = parsed;
+        }
+      } catch (err) {}
+      
+      if (isDailyRoutine && routineData && routineData.steps) {
+        // Add all routine steps to the simulation timeline
+        routineData.steps.forEach(step => {
+          const fakeTemplate = {
+            title: step.title,
+            category: step.category || "other",
+            xp: step.xp !== undefined ? step.xp : 20,
+            stress: step.stress !== undefined ? step.stress : 5,
+            value: step.value !== undefined ? step.value : 0,
+            duration: step.duration || 30
+          };
+          addTemplateToSimSteps(fakeTemplate);
+        });
+        return;
+      }
+      
+      // Otherwise handle as a regular Action Block template
+      const templateId = dropDataStr;
       const template = state.templates.find(t => t.id === templateId) || pastTemplates.find(t => t.id === templateId);
       if (!template) return;
       
@@ -4162,7 +4287,7 @@ function runSimulationStep() {
     pauseSimulation();
     soundEffects.play("success");
     setTimeout(() => {
-      alert("🏆 Simulation Completed! Routine log has finished play cycle successfully.");
+      showAppAlert("🏆 Simulation Completed! Routine log has finished play cycle successfully.");
     }, 200);
     return;
   }
@@ -4293,7 +4418,7 @@ function runWeeklySimulationStep() {
     pauseSimulation();
     soundEffects.play("success");
     setTimeout(() => {
-      alert("🏆 Weekly Simulation Completed! The full 7-day academic cycle has finished playing successfully.");
+      showAppAlert("🏆 Weekly Simulation Completed! The full 7-day academic cycle has finished playing successfully.");
     }, 200);
     return;
   }
@@ -4612,53 +4737,55 @@ function updateRoutineSavesWidget() {
 
   // Setup new listeners
   newSaveBtn.addEventListener("click", () => {
-    const name = prompt("Enter a name for this routine variation:");
-    if (!name || name.trim() === "") return;
+    showAppPrompt("Enter a name for this routine variation:", "", (name) => {
+      if (!name || name.trim() === "") return;
 
-    const trimmedName = name.trim();
-    const existingIdx = variations.findIndex(v => v.name.toLowerCase() === trimmedName.toLowerCase());
+      const trimmedName = name.trim();
+      const existingIdx = variations.findIndex(v => v.name.toLowerCase() === trimmedName.toLowerCase());
 
-    let variationObj = {};
-    if (isWeekly) {
-      variationObj = {
-        id: existingIdx > -1 ? variations[existingIdx].id : "week-var-" + generateUUID(),
-        name: trimmedName,
-        weekDays: JSON.parse(JSON.stringify(sim.weekDays))
-      };
-    } else {
-      variationObj = {
-        id: existingIdx > -1 ? variations[existingIdx].id : "sim-var-" + generateUUID(),
-        name: trimmedName,
-        steps: JSON.parse(JSON.stringify(sim.steps))
-      };
-    }
-
-    if (existingIdx > -1) {
-      if (confirm(`A variation named "${trimmedName}" already exists. Do you want to overwrite it?`)) {
-        variations[existingIdx] = variationObj;
+      let variationObj = {};
+      if (isWeekly) {
+        variationObj = {
+          id: existingIdx > -1 ? variations[existingIdx].id : "week-var-" + generateUUID(),
+          name: trimmedName,
+          weekDays: JSON.parse(JSON.stringify(sim.weekDays))
+        };
       } else {
-        return;
+        variationObj = {
+          id: existingIdx > -1 ? variations[existingIdx].id : "sim-var-" + generateUUID(),
+          name: trimmedName,
+          steps: JSON.parse(JSON.stringify(sim.steps))
+        };
       }
-    } else {
-      variations.push(variationObj);
-    }
 
-    localStorage.setItem(storageKey, JSON.stringify(variations));
-    sim.variationId = variationObj.id;
-    sim.variationName = variationObj.name;
+      const doSave = () => {
+        localStorage.setItem(storageKey, JSON.stringify(variations));
+        sim.variationId = variationObj.id;
+        sim.variationName = variationObj.name;
+        updateRoutineSavesWidget();
+        showAppAlert(`✅ Variation "${trimmedName}" saved successfully!`);
+        if (sim.scenarioId === "weekly-simulator") {
+          renderActionTemplates();
+        }
+      };
 
-    // Refresh dropdown select
-    updateRoutineSavesWidget();
-    alert(`Variation "${trimmedName}" saved successfully!`);
-    
-    // Update sidebar templates daily routines if weekly simulator is active
-    if (sim.scenarioId === "weekly-simulator") {
-      renderActionTemplates();
-    }
+      if (existingIdx > -1) {
+        showAppConfirm(`A variation named "${trimmedName}" already exists. Do you want to overwrite it?`, (confirmed) => {
+          if (confirmed) {
+            variations[existingIdx] = variationObj;
+            doSave();
+          }
+        });
+      } else {
+        variations.push(variationObj);
+        doSave();
+      }
+    });
   });
 
   newRevertBtn.addEventListener("click", () => {
-    if (confirm("Are you sure you want to revert back to the default schedule? This will replace your current edits.")) {
+    showAppConfirm("Are you sure you want to revert back to the default schedule? This will replace your current edits.", (confirmed) => {
+      if (!confirmed) return;
       pauseSimulation();
       sim.variationId = null;
       sim.variationName = null;
@@ -4692,8 +4819,8 @@ function updateRoutineSavesWidget() {
       triggerViewChange(() => {
         renderCalendar();
       });
-      alert("Reverted to default schedule.");
-    }
+      showAppAlert("✅ Reverted to default schedule.");
+    });
   });
 
   newSelectEl.addEventListener("change", (e) => {
@@ -4836,36 +4963,41 @@ function saveCustomSimulationVariation() {
   const sim = state.activeSimulation;
   if (!sim || sim.steps.length === 0) return;
 
-  const name = prompt("Enter a name for this custom simulation variation:");
-  if (!name || name.trim() === "") return;
+  showAppPrompt("Enter a name for this custom simulation variation:", "", (name) => {
+    if (!name || name.trim() === "") return;
 
-  const trimmedName = name.trim();
-  const savedSims = JSON.parse(localStorage.getItem("aetherflow_custom_sim_variations") || "[]");
+    const trimmedName = name.trim();
+    const savedSims = JSON.parse(localStorage.getItem("aetherflow_custom_sim_variations") || "[]");
 
-  // Check if name already exists
-  const existingIdx = savedSims.findIndex(v => v.name.toLowerCase() === trimmedName.toLowerCase());
+    // Check if name already exists
+    const existingIdx = savedSims.findIndex(v => v.name.toLowerCase() === trimmedName.toLowerCase());
 
-  const simVarObj = {
-    id: "sim-var-" + generateUUID(),
-    name: trimmedName,
-    steps: JSON.parse(JSON.stringify(sim.steps))
-  };
+    const simVarObj = {
+      id: "sim-var-" + generateUUID(),
+      name: trimmedName,
+      steps: JSON.parse(JSON.stringify(sim.steps))
+    };
 
-  if (existingIdx > -1) {
-    if (confirm(`A simulation variation named "${trimmedName}" already exists. Do you want to overwrite it?`)) {
-      simVarObj.id = savedSims[existingIdx].id; // preserve id
-      savedSims[existingIdx] = simVarObj;
+    const doSave = () => {
+      localStorage.setItem("aetherflow_custom_sim_variations", JSON.stringify(savedSims));
+      showAppAlert(`✅ Simulation variation "${trimmedName}" saved successfully!`, () => {
+        exitSimulation();
+      });
+    };
+
+    if (existingIdx > -1) {
+      showAppConfirm(`A simulation variation named "${trimmedName}" already exists. Do you want to overwrite it?`, (confirmed) => {
+        if (confirmed) {
+          simVarObj.id = savedSims[existingIdx].id; // preserve id
+          savedSims[existingIdx] = simVarObj;
+          doSave();
+        }
+      });
     } else {
-      return;
+      savedSims.push(simVarObj);
+      doSave();
     }
-  } else {
-    savedSims.push(simVarObj);
-  }
-
-  localStorage.setItem("aetherflow_custom_sim_variations", JSON.stringify(savedSims));
-  alert(`Simulation variation "${trimmedName}" saved successfully!`);
-  
-  exitSimulation();
+  });
 }
 
 // Start simulation from loaded custom variation
@@ -5172,7 +5304,7 @@ function setupSyncDialogListeners() {
     const token = document.getElementById("sync-github-token").value.trim();
 
     if (!username || !repo || !token) {
-      alert("Please fill in all sync settings fields.");
+      showAppAlert("⚠️ Please fill in all sync settings fields.");
       return;
     }
 
@@ -5193,10 +5325,10 @@ function setupSyncDialogListeners() {
       await githubSync.uploadFile(stateObj);
       
       soundEffects.play("success");
-      alert("🏆 Sync Successful! Local database uploaded to your GitHub repository.");
+      showAppAlert("🏆 Sync Successful! Local database uploaded to your GitHub repository.");
       dialog.close();
     } catch (err) {
-      alert(`❌ Sync Failed: ${err.message}`);
+      showAppAlert(`❌ Sync Failed: ${err.message}`);
     } finally {
       pushBtn.disabled = false;
       pushBtn.innerText = originalText;
@@ -5206,7 +5338,7 @@ function setupSyncDialogListeners() {
 
   // Handle Pull (Download) Event
   if (pullBtn) {
-    pullBtn.addEventListener("click", async () => {
+    pullBtn.addEventListener("click", () => {
       soundEffects.play("click");
       
       const username = document.getElementById("sync-github-username").value.trim();
@@ -5214,72 +5346,72 @@ function setupSyncDialogListeners() {
       const token = document.getElementById("sync-github-token").value.trim();
 
       if (!username || !repo || !token) {
-        alert("Please configure Username, Repo, and Token before pulling data.");
+        showAppAlert("⚠️ Please configure Username, Repo, and Token before pulling data.");
         return;
       }
 
-      if (!confirm("Are you sure you want to download remote sync data? This will overwrite your current local calendar data.")) {
-        return;
-      }
+      showAppConfirm("Are you sure you want to download remote sync data? This will overwrite your current local calendar data.", async (confirmed) => {
+        if (!confirmed) return;
 
-      const originalText = pullBtn.innerText;
-      pullBtn.disabled = true;
-      pullBtn.innerText = "Downloading...";
-      if (pushBtn) pushBtn.disabled = true;
+        const originalText = pullBtn.innerText;
+        pullBtn.disabled = true;
+        pullBtn.innerText = "Downloading...";
+        if (pushBtn) pushBtn.disabled = true;
 
-      try {
-        githubSync.setCredentials(username, repo, token);
-        const result = await githubSync.fetchFile();
+        try {
+          githubSync.setCredentials(username, repo, token);
+          const result = await githubSync.fetchFile();
 
-        if (!result || !result.content) {
-          alert("❌ No remote calendar data found. Push from your source device first.");
-          return;
+          if (!result || !result.content) {
+            showAppAlert("❌ No remote calendar data found. Push from your source device first.");
+            return;
+          }
+
+          // Apply state
+          githubSync.applyState(result.content);
+          if (result.content.syncTime) {
+            localStorage.setItem("aetherflow_sync_time", result.content.syncTime);
+          }
+
+          // Reload data from local storage
+          state.tasks = JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]");
+          state.userStats = JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}');
+          state.groups = JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]");
+          state.collapsedGroups = JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}");
+
+          // Reload templates
+          const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
+          const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
+          const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
+          const allBuiltins = [
+            ...templates,
+            ...pastTemplates.map(t => ({ ...t, groupId: "group-past", past: true }))
+          ];
+          const filteredBuiltins = allBuiltins.filter(t => !deletedBuiltinIds.includes(t.id)).map(t => {
+            if (modifiedBuiltins[t.id]) return { ...t, ...modifiedBuiltins[t.id] };
+            return t;
+          });
+          state.templates = [...filteredBuiltins, ...JSON.parse(savedCustomTemplates)];
+
+          soundEffects.play("success");
+          showAppAlert("🏆 Sync Successful! Remote calendar data downloaded and loaded successfully.");
+          
+          triggerViewChange(() => {
+            renderCalendar();
+            updateAgendaList();
+            renderUserStats();
+            renderActionTemplates();
+          });
+
+          dialog.close();
+        } catch (err) {
+          showAppAlert(`❌ Pull Failed: ${err.message}`);
+        } finally {
+          pullBtn.disabled = false;
+          pullBtn.innerText = originalText;
+          if (pushBtn) pushBtn.disabled = false;
         }
-
-        // Apply state
-        githubSync.applyState(result.content);
-        if (result.content.syncTime) {
-          localStorage.setItem("aetherflow_sync_time", result.content.syncTime);
-        }
-
-        // Reload data from local storage
-        state.tasks = JSON.parse(localStorage.getItem("aetherflow_tasks") || "[]");
-        state.userStats = JSON.parse(localStorage.getItem("aetherflow_stats") || '{"xp":120,"level":1,"stress":30,"value":50}');
-        state.groups = JSON.parse(localStorage.getItem("aetherflow_template_groups") || "[]");
-        state.collapsedGroups = JSON.parse(localStorage.getItem("aetherflow_collapsed_groups") || "{}");
-
-        // Reload templates
-        const savedCustomTemplates = localStorage.getItem("aetherflow_custom_templates") || "[]";
-        const deletedBuiltinIds = JSON.parse(localStorage.getItem("aetherflow_deleted_templates") || "[]");
-        const modifiedBuiltins = JSON.parse(localStorage.getItem("aetherflow_modified_builtins") || "{}");
-        const allBuiltins = [
-          ...templates,
-          ...pastTemplates.map(t => ({ ...t, groupId: "group-past", past: true }))
-        ];
-        const filteredBuiltins = allBuiltins.filter(t => !deletedBuiltinIds.includes(t.id)).map(t => {
-          if (modifiedBuiltins[t.id]) return { ...t, ...modifiedBuiltins[t.id] };
-          return t;
-        });
-        state.templates = [...filteredBuiltins, ...JSON.parse(savedCustomTemplates)];
-
-        soundEffects.play("success");
-        alert("🏆 Sync Successful! Remote calendar data downloaded and loaded successfully.");
-        
-        triggerViewChange(() => {
-          renderCalendar();
-          updateAgendaList();
-          renderUserStats();
-          renderActionTemplates();
-        });
-
-        dialog.close();
-      } catch (err) {
-        alert(`❌ Pull Failed: ${err.message}`);
-      } finally {
-        pullBtn.disabled = false;
-        pullBtn.innerText = originalText;
-        if (pushBtn) pushBtn.disabled = false;
-      }
+      });
     });
   }
 
@@ -5287,15 +5419,17 @@ function setupSyncDialogListeners() {
   if (disconnectBtn) {
     disconnectBtn.addEventListener("click", () => {
       soundEffects.play("click");
-      if (confirm("Are you sure you want to disconnect sync? This will not delete your data on GitHub or locally, but your devices will stop syncing.")) {
-        githubSync.clearCredentials();
-        document.getElementById("sync-github-username").value = "";
-        document.getElementById("sync-github-repo").value = "";
-        document.getElementById("sync-github-token").value = "";
-        disconnectBtn.style.display = "none";
-        alert("Sync disconnected successfully.");
-        dialog.close();
-      }
+      showAppConfirm("Are you sure you want to disconnect sync? This will not delete your data on GitHub or locally, but your devices will stop syncing.", (confirmed) => {
+        if (confirmed) {
+          githubSync.clearCredentials();
+          document.getElementById("sync-github-username").value = "";
+          document.getElementById("sync-github-repo").value = "";
+          document.getElementById("sync-github-token").value = "";
+          disconnectBtn.style.display = "none";
+          showAppAlert("✅ Sync disconnected successfully.");
+          dialog.close();
+        }
+      });
     });
   }
 }
