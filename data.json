@@ -561,22 +561,6 @@
       "colLeft": 0
     },
     {
-      "id": "dc1at0xmpxg1sgo",
-      "title": "✏️ Drawing Sheet Work",
-      "description": "Routine Block: ✏️ Drawing Sheet Work",
-      "date": "2026-06-03",
-      "startTime": "09:30",
-      "duration": 45,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
       "id": "609jmwempxg1sgo",
       "title": "🚽 Dooki Break",
       "description": "Routine Block: 🚽 Dooki Break",
@@ -860,5 +844,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780455346594
+  "syncTime": 1780461634891
 }
