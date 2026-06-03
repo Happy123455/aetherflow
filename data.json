@@ -552,10 +552,13 @@
       "startTime": "09:00",
       "duration": 30,
       "category": "personal",
-      "completed": false,
+      "completed": true,
       "xp": 15,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "dc1at0xmpxg1sgo",
@@ -568,7 +571,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "609jmwempxg1sgo",
@@ -581,7 +587,10 @@
       "completed": false,
       "xp": 5,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "g1dc1wcmpxg1sgo",
@@ -594,7 +603,10 @@
       "completed": false,
       "xp": 40,
       "stress": 20,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "vrcmxs6mpxg1sgo",
@@ -607,7 +619,10 @@
       "completed": false,
       "xp": 20,
       "stress": -20,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "v6cpghwmpxg1sgo",
@@ -620,7 +635,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "zfmvtnmmpxg1sgo",
@@ -633,7 +651,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "jp11pzzmpxg1sgo",
@@ -646,7 +667,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "fsslujpmpxg1sgo",
@@ -659,7 +683,10 @@
       "completed": false,
       "xp": 50,
       "stress": 20,
-      "value": 30
+      "value": 30,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "i4jid0xmpxg1sgo",
@@ -672,7 +699,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "rjh0butmpxg1sgo",
@@ -685,7 +715,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "4oalxe1mpxg1sgo",
@@ -698,7 +731,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "jidqnjwmpxg1sgo",
@@ -711,7 +747,10 @@
       "completed": false,
       "xp": 25,
       "stress": -15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "0sf8vr8mpxg1sgo",
@@ -724,7 +763,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "w4j4pthmpxg1sgo",
@@ -737,7 +779,10 @@
       "completed": false,
       "xp": 40,
       "stress": 15,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "7m3ry67mpxg1sgo",
@@ -750,7 +795,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "1h2g87fmpxg1sgo",
@@ -763,13 +811,16 @@
       "completed": false,
       "xp": 25,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     }
   ],
   "userStats": {
-    "xp": 2,
+    "xp": 17,
     "level": 1,
-    "stress": 30,
+    "stress": 25,
     "value": 50
   },
   "customTemplates": [],
@@ -809,5 +860,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780453509720
+  "syncTime": 1780455346594
 }
