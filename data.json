@@ -561,22 +561,6 @@
       "colLeft": 0
     },
     {
-      "id": "609jmwempxg1sgo",
-      "title": "🚽 Dooki Break",
-      "description": "Routine Block: 🚽 Dooki Break",
-      "date": "2026-06-03",
-      "startTime": "10:15",
-      "duration": 30,
-      "category": "personal",
-      "completed": false,
-      "xp": 5,
-      "stress": -10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
       "id": "g1dc1wcmpxg1sgo",
       "title": "📐 Structure Assignment",
       "description": "Routine Block: 📐 Structure Assignment",
@@ -844,5 +828,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780461634891
+  "syncTime": 1780461643606
 }
