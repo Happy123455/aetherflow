@@ -795,7 +795,10 @@
       "completed": false,
       "xp": 15,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "exe7nf5mpyud25j",
@@ -808,7 +811,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "5zcct1fmpyud25j",
@@ -821,7 +827,10 @@
       "completed": false,
       "xp": 5,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "fc3cjk5mpyud25j",
@@ -834,7 +843,10 @@
       "completed": false,
       "xp": 40,
       "stress": 20,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "3r6ssgempyud25j",
@@ -847,7 +859,10 @@
       "completed": false,
       "xp": 20,
       "stress": -20,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "fw0cvqxmpyud25j",
@@ -860,7 +875,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "73cponrmpyud25j",
@@ -873,7 +891,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "5rlixksmpyud25j",
@@ -886,7 +907,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "otoc21rmpyud25j",
@@ -899,7 +923,10 @@
       "completed": false,
       "xp": 50,
       "stress": 20,
-      "value": 30
+      "value": 30,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "6u106l6mpyud25j",
@@ -912,7 +939,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "r3pz9jpmpyud25j",
@@ -925,7 +955,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "pjv40r2mpyud25j",
@@ -938,7 +971,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "4l2r5uompyud25j",
@@ -951,7 +987,10 @@
       "completed": false,
       "xp": 25,
       "stress": -15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "bp42klfmpyud25j",
@@ -964,7 +1003,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "2z6280umpyud25j",
@@ -977,7 +1019,10 @@
       "completed": false,
       "xp": 40,
       "stress": 15,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "xog0wcqmpyud25j",
@@ -990,7 +1035,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "nhkkt87mpyud25j",
@@ -1003,6 +1051,360 @@
       "completed": false,
       "xp": 25,
       "stress": 15,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
+    },
+    {
+      "id": "lgdt082mq3f3041",
+      "title": "🍳 Bed Making / Breakfast",
+      "description": "Routine Block: 🍳 Bed Making / Breakfast",
+      "date": "2026-06-07",
+      "startTime": "08:00",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 15,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "kke86xjmq3f3041",
+      "title": "📖 Page ac (Study)",
+      "description": "Routine Block: 📖 Page ac (Study)",
+      "date": "2026-06-07",
+      "startTime": "08:30",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "d8zub8mmq3f3041",
+      "title": "🚽 Dooki Break",
+      "description": "Routine Block: 🚽 Dooki Break",
+      "date": "2026-06-07",
+      "startTime": "09:00",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 5,
+      "stress": -10,
+      "value": 0
+    },
+    {
+      "id": "wdsk7vmmq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "09:30",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "xuu7xhcmq3f3041",
+      "title": "🎮 Genshin Resin & Eye Exercises",
+      "description": "Routine Block: 🎮 Genshin Resin & Eye Exercises",
+      "date": "2026-06-07",
+      "startTime": "10:00",
+      "duration": 30,
+      "category": "other",
+      "completed": false,
+      "xp": 20,
+      "stress": -20,
+      "value": 0
+    },
+    {
+      "id": "ms7ess1mq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "10:30",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "gkvqmrpmq3f3041",
+      "title": "🧘 Snacks & Yoga Session",
+      "description": "Routine Block: 🧘 Snacks & Yoga Session",
+      "date": "2026-06-07",
+      "startTime": "11:00",
+      "duration": 20,
+      "category": "health",
+      "completed": false,
+      "xp": 15,
+      "stress": -10,
+      "value": 10
+    },
+    {
+      "id": "ih9v41ymq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "11:20",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "plb3rsdmq3f3041",
+      "title": "💬 Talk Break & Clean Towel",
+      "description": "Routine Block: 💬 Talk Break & Clean Towel",
+      "date": "2026-06-07",
+      "startTime": "11:50",
+      "duration": 10,
+      "category": "personal",
+      "completed": false,
+      "xp": 10,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "4dhe56nmq3f3041",
+      "title": "💻 Site Work & Coding Sprints",
+      "description": "Routine Block: 💻 Site Work & Coding Sprints",
+      "date": "2026-06-07",
+      "startTime": "12:00",
+      "duration": 90,
+      "category": "work",
+      "completed": false,
+      "xp": 50,
+      "stress": 20,
+      "value": 30
+    },
+    {
+      "id": "qcobe79mq3f3041",
+      "title": "🥪 Lunch Break",
+      "description": "Routine Block: 🥪 Lunch Break",
+      "date": "2026-06-07",
+      "startTime": "13:30",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 15,
+      "stress": -10,
+      "value": 0
+    },
+    {
+      "id": "qrmcxfvmq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "14:00",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "ocrh9dxmq3f3041",
+      "title": "📖 Story or Material Study",
+      "description": "Routine Block: 📖 Story or Material Study",
+      "date": "2026-06-07",
+      "startTime": "14:30",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 10,
+      "value": 0
+    },
+    {
+      "id": "ouin6z0mq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "15:00",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "lmps6jtmq3f3041",
+      "title": "👀 Eye test & Stretching",
+      "description": "Routine Block: 👀 Eye test & Stretching",
+      "date": "2026-06-07",
+      "startTime": "15:30",
+      "duration": 15,
+      "category": "health",
+      "completed": false,
+      "xp": 10,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "yzpqz2bmq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "15:45",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "7l6h6l4mq3f3041",
+      "title": "🎒 Snacks & pack bags",
+      "description": "Routine Block: 🎒 Snacks & pack bags",
+      "date": "2026-06-07",
+      "startTime": "16:15",
+      "duration": 15,
+      "category": "personal",
+      "completed": false,
+      "xp": 10,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "jac2lfjmq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "16:30",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "445w7xomq3f3041",
+      "title": "🏖️ Afternoon Break",
+      "description": "Routine Block: 🏖️ Afternoon Break",
+      "date": "2026-06-07",
+      "startTime": "17:00",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 5,
+      "stress": -10,
+      "value": 0
+    },
+    {
+      "id": "c0q3yyhmq3f3041",
+      "title": "🏃 Exercise Session",
+      "description": "Routine Block: 🏃 Exercise Session",
+      "date": "2026-06-07",
+      "startTime": "17:30",
+      "duration": 30,
+      "category": "health",
+      "completed": false,
+      "xp": 25,
+      "stress": -15,
+      "value": 0
+    },
+    {
+      "id": "szd517gmq3f3041",
+      "title": "🍏 Snacks 2",
+      "description": "Routine Block: 🍏 Snacks 2",
+      "date": "2026-06-07",
+      "startTime": "18:00",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 10,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "u0qieaemq3f3041",
+      "title": "📚 Sem 3 review",
+      "description": "Routine Block: 📚 Sem 3 review",
+      "date": "2026-06-07",
+      "startTime": "18:30",
+      "duration": 50,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 15,
+      "value": 0
+    },
+    {
+      "id": "kag4mkbmq3f3041",
+      "title": "💬 Talk Break",
+      "description": "Routine Block: 💬 Talk Break",
+      "date": "2026-06-07",
+      "startTime": "19:20",
+      "duration": 10,
+      "category": "personal",
+      "completed": false,
+      "xp": 10,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "gadkz9tmq3f3041",
+      "title": "💻 Exhaust fan, Site work & LMS Check",
+      "description": "Routine Block: 💻 Exhaust fan, Site work & LMS Check",
+      "date": "2026-06-07",
+      "startTime": "19:30",
+      "duration": 60,
+      "category": "work",
+      "completed": false,
+      "xp": 40,
+      "stress": 15,
+      "value": 10
+    },
+    {
+      "id": "oxhaqcjmq3f3041",
+      "title": "🍽️ Dinner Time",
+      "description": "Routine Block: 🍽️ Dinner Time",
+      "date": "2026-06-07",
+      "startTime": "20:30",
+      "duration": 30,
+      "category": "personal",
+      "completed": false,
+      "xp": 15,
+      "stress": -10,
+      "value": 0
+    },
+    {
+      "id": "v7zuq3amq3f3041",
+      "title": "📖 Page study",
+      "description": "Routine Block: 📖 Page study",
+      "date": "2026-06-07",
+      "startTime": "21:00",
+      "duration": 30,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 5,
+      "value": 0
+    },
+    {
+      "id": "0h9z8n3mq3f3041",
+      "title": "🕸️ Mosquito net (Weekend prep)",
+      "description": "Routine Block: 🕸️ Mosquito net (Weekend prep)",
+      "date": "2026-06-07",
+      "startTime": "21:30",
+      "duration": 30,
+      "category": "other",
+      "completed": false,
+      "xp": 5,
+      "stress": -5,
       "value": 0
     }
   ],
@@ -1049,5 +1451,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780538189378
+  "syncTime": 1780814683731
 }
