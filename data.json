@@ -1496,7 +1496,7 @@
       "startTime": "07:08",
       "duration": 30,
       "category": "other",
-      "completed": false,
+      "completed": true,
       "xp": 30,
       "stress": 10,
       "value": 0,
@@ -1512,7 +1512,7 @@
       "startTime": "07:45",
       "duration": 60,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 30,
       "stress": 10,
       "value": 0,
@@ -1528,7 +1528,7 @@
       "startTime": "08:40",
       "duration": 60,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 30,
       "stress": 10,
       "value": 0,
@@ -1544,7 +1544,7 @@
       "startTime": "09:50",
       "duration": 120,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 30,
       "stress": 10,
       "value": 0,
@@ -1560,16 +1560,19 @@
       "startTime": "12:10",
       "duration": 120,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 30,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
     }
   ],
   "userStats": {
-    "xp": 17,
+    "xp": 167,
     "level": 1,
-    "stress": 25,
+    "stress": 75,
     "value": 50
   },
   "customTemplates": [
@@ -1665,5 +1668,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780985611922
+  "syncTime": 1780992860689
 }
