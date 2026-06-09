@@ -1519,6 +1519,17 @@
       "stress": -8,
       "value": 0,
       "custom": true
+    },
+    {
+      "id": "tpl-custom-x2ihli7mq5zgyc7",
+      "title": "Transportation lecture",
+      "category": "work",
+      "groupId": "group-academic",
+      "duration": 110,
+      "xp": 15,
+      "stress": 15,
+      "value": 2,
+      "custom": true
     }
   ],
   "deletedTemplates": [],
@@ -1557,5 +1568,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780969727374
+  "syncTime": 1780969859287
 }
