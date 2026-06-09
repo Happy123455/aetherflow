@@ -1414,7 +1414,19 @@
     "stress": 25,
     "value": 50
   },
-  "customTemplates": [],
+  "customTemplates": [
+    {
+      "id": "tpl-custom-wkn9zrqmq5zcdfm",
+      "title": "Bus comut",
+      "category": "other",
+      "groupId": "group-academic",
+      "duration": 25,
+      "xp": 6,
+      "stress": -8,
+      "value": 0,
+      "custom": true
+    }
+  ],
   "deletedTemplates": [],
   "modifiedBuiltins": {},
   "templateGroups": [
@@ -1451,5 +1463,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780968190244
+  "syncTime": 1780969645573
 }
