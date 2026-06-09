@@ -1067,7 +1067,10 @@
       "completed": false,
       "xp": 15,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "kke86xjmq3f3041",
@@ -1080,7 +1083,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "d8zub8mmq3f3041",
@@ -1093,7 +1099,10 @@
       "completed": false,
       "xp": 5,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "wdsk7vmmq3f3041",
@@ -1106,7 +1115,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "xuu7xhcmq3f3041",
@@ -1119,7 +1131,10 @@
       "completed": false,
       "xp": 20,
       "stress": -20,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ms7ess1mq3f3041",
@@ -1132,7 +1147,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "gkvqmrpmq3f3041",
@@ -1145,7 +1163,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ih9v41ymq3f3041",
@@ -1158,7 +1179,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "plb3rsdmq3f3041",
@@ -1171,7 +1195,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "4dhe56nmq3f3041",
@@ -1184,7 +1211,10 @@
       "completed": false,
       "xp": 50,
       "stress": 20,
-      "value": 30
+      "value": 30,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "qcobe79mq3f3041",
@@ -1197,7 +1227,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "qrmcxfvmq3f3041",
@@ -1210,7 +1243,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ocrh9dxmq3f3041",
@@ -1223,7 +1259,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ouin6z0mq3f3041",
@@ -1236,7 +1275,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "lmps6jtmq3f3041",
@@ -1249,7 +1291,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "yzpqz2bmq3f3041",
@@ -1262,7 +1307,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "7l6h6l4mq3f3041",
@@ -1275,7 +1323,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "jac2lfjmq3f3041",
@@ -1288,7 +1339,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "445w7xomq3f3041",
@@ -1301,7 +1355,10 @@
       "completed": false,
       "xp": 5,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "c0q3yyhmq3f3041",
@@ -1314,7 +1371,10 @@
       "completed": false,
       "xp": 25,
       "stress": -15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "szd517gmq3f3041",
@@ -1327,7 +1387,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "u0qieaemq3f3041",
@@ -1340,7 +1403,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "kag4mkbmq3f3041",
@@ -1353,7 +1419,10 @@
       "completed": false,
       "xp": 10,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "gadkz9tmq3f3041",
@@ -1366,7 +1435,10 @@
       "completed": false,
       "xp": 40,
       "stress": 15,
-      "value": 10
+      "value": 10,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "oxhaqcjmq3f3041",
@@ -1379,7 +1451,10 @@
       "completed": false,
       "xp": 15,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "v7zuq3amq3f3041",
@@ -1392,7 +1467,10 @@
       "completed": false,
       "xp": 20,
       "stress": 5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "0h9z8n3mq3f3041",
@@ -1405,6 +1483,22 @@
       "completed": false,
       "xp": 5,
       "stress": -5,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
+    },
+    {
+      "id": "9t202epmq5zdbnl",
+      "title": "Bus comut",
+      "description": "Action Block: Bus comut",
+      "date": "2026-06-09",
+      "startTime": "07:08",
+      "duration": null,
+      "category": "other",
+      "completed": false,
+      "xp": 30,
+      "stress": 10,
       "value": 0
     }
   ],
@@ -1463,5 +1557,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780969645573
+  "syncTime": 1780969689922
 }
