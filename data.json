@@ -1494,7 +1494,7 @@
       "description": "Action Block: Bus comut",
       "date": "2026-06-09",
       "startTime": "07:08",
-      "duration": null,
+      "duration": 30,
       "category": "other",
       "completed": false,
       "xp": 30,
@@ -1557,5 +1557,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780969689922
+  "syncTime": 1780969727374
 }
