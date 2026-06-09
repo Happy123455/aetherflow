@@ -1573,6 +1573,17 @@
       "stress": 15,
       "value": 0,
       "custom": true
+    },
+    {
+      "id": "tpl-custom-790khlomq5zn2iq",
+      "title": "CAD",
+      "category": "work",
+      "groupId": "group-academic",
+      "duration": 120,
+      "xp": 20,
+      "stress": 3,
+      "value": 0,
+      "custom": true
     }
   ],
   "deletedTemplates": [],
@@ -1611,5 +1622,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780970069636
+  "syncTime": 1780970144642
 }
