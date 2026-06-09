@@ -1510,7 +1510,7 @@
       "description": "Action Block: Transportation lecture",
       "date": "2026-06-09",
       "startTime": "07:45",
-      "duration": 120,
+      "duration": 60,
       "category": "work",
       "completed": false,
       "xp": 30,
@@ -1584,5 +1584,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780969898388
+  "syncTime": 1780969965633
 }
