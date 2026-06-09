@@ -1499,6 +1499,22 @@
       "completed": false,
       "xp": 30,
       "stress": 10,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
+    },
+    {
+      "id": "qh3vl8ymq5zhley",
+      "title": "Transportation lecture",
+      "description": "Action Block: Transportation lecture",
+      "date": "2026-06-09",
+      "startTime": "07:45",
+      "duration": null,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 10,
       "value": 0
     }
   ],
@@ -1568,5 +1584,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780969859287
+  "syncTime": 1780969889199
 }
