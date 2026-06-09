@@ -1600,6 +1600,17 @@
       "stress": 3,
       "value": 0,
       "custom": true
+    },
+    {
+      "id": "tpl-custom-8lrltnzmq5zpif1",
+      "title": "Hydrology lab",
+      "category": "work",
+      "groupId": "group-academic",
+      "duration": 120,
+      "xp": 10,
+      "stress": 5,
+      "value": 0,
+      "custom": true
     }
   ],
   "deletedTemplates": [],
@@ -1638,5 +1649,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780970175993
+  "syncTime": 1780970258557
 }
