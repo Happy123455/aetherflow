@@ -1501,7 +1501,7 @@
       "stress": 10,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1517,7 +1517,7 @@
       "stress": 10,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1527,6 +1527,22 @@
       "date": "2026-06-09",
       "startTime": "08:40",
       "duration": 60,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 10,
+      "value": 0,
+      "colIndex": 1,
+      "colWidth": 50,
+      "colLeft": 50
+    },
+    {
+      "id": "bj8xj7xmq5znqpk",
+      "title": "CAD",
+      "description": "Action Block: CAD",
+      "date": "2026-06-09",
+      "startTime": "09:50",
+      "duration": 120,
       "category": "work",
       "completed": false,
       "xp": 30,
@@ -1622,5 +1638,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780970144642
+  "syncTime": 1780970175993
 }
