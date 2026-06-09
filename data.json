@@ -1547,6 +1547,22 @@
       "completed": false,
       "xp": 30,
       "stress": 10,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
+    },
+    {
+      "id": "xtswi0jmq5zq1pv",
+      "title": "Hydrology lab",
+      "description": "Action Block: Hydrology lab",
+      "date": "2026-06-09",
+      "startTime": "12:10",
+      "duration": 120,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 10,
       "value": 0
     }
   ],
@@ -1649,5 +1665,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1780970258557
+  "syncTime": 1780970283574
 }
