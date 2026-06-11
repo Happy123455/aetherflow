@@ -1630,6 +1630,17 @@
       "stress": 5,
       "value": 0,
       "custom": true
+    },
+    {
+      "id": "tpl-custom-ekfeoy0mq8u5zlh",
+      "title": "Structure",
+      "category": "work",
+      "groupId": "group-academic",
+      "duration": 60,
+      "xp": 25,
+      "stress": 20,
+      "value": 0,
+      "custom": true
     }
   ],
   "deletedTemplates": [],
@@ -1668,5 +1679,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781142313679
+  "syncTime": 1781142348150
 }
