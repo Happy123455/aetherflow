@@ -1567,6 +1567,19 @@
       "colIndex": 0,
       "colWidth": 50,
       "colLeft": 0
+    },
+    {
+      "id": "5kadicamq8u6vz2",
+      "title": "Structure",
+      "description": "Action Block: Structure",
+      "date": "2026-06-11",
+      "startTime": "07:45",
+      "duration": 60,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 10,
+      "value": 0
     }
   ],
   "userStats": {
@@ -1679,5 +1692,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781142348150
+  "syncTime": 1781142390112
 }
