@@ -1579,7 +1579,10 @@
       "completed": false,
       "xp": 30,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     }
   ],
   "userStats": {
@@ -1692,5 +1695,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781142390112
+  "syncTime": 1781142416025
 }
