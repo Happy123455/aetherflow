@@ -843,6 +843,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSoundEffectsListeners();
   setupMobileSidebar();
   setupSyncDialogListeners();
+  setupCollegeNotifToggle();
 
   // Setup Zoom Slider Listener
   const zoomSlider = document.getElementById("zoom-slider");
@@ -878,6 +879,9 @@ document.addEventListener("DOMContentLoaded", () => {
   renderUserStats();
   renderActionTemplates();
   updateSuggestions();
+
+  // Initialize college end-of-day notification system
+  initCollegeNotifications();
 
   // Background Startup Pull (Stale-While-Revalidate)
   if (githubSync.isEnabled()) {
@@ -2498,7 +2502,20 @@ function renderActionTemplates() {
 
       card.addEventListener("click", () => {
         soundEffects.play("click");
-        if (isWeeklySim) {
+        if (tpl.isFullWeek) {
+          // Special: apply college timetable with per-day routines
+          showAppConfirm("🎓 Apply your full college timetable (Mon–Fri) to this week?\\n\\nThis will add all lectures, labs, breaks, and sports for Batch-2 CV-5.", (confirmed) => {
+            if (!confirmed) return;
+            showAppConfirm("Overwrite existing tasks for this week, or append alongside them?\\n\\nChoose Confirm to OVERWRITE, or Cancel to APPEND.", (overwrite) => {
+              const today = new Date();
+              const dayOfWeek = today.getDay();
+              const monday = new Date(today);
+              monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+              monday.setHours(0, 0, 0, 0);
+              applyCollegeTimetableToWeek(monday, overwrite ? "overwrite" : "append");
+            });
+          });
+        } else if (isWeeklySim) {
           openAssignRoutineDialog(tpl);
         } else {
           openApplyRoutineCalendarDialog(tpl);
@@ -3407,9 +3424,94 @@ function setupSoundEffectsListeners() {
   });
 }
 
+// College Notification Toggle Button
+function setupCollegeNotifToggle() {
+  const btn = document.getElementById("btn-toggle-college-notif");
+  if (!btn) return;
+
+  const updateVisual = () => {
+    const isOn = localStorage.getItem("aetherflow_college_notif") !== "off";
+    if (isOn) {
+      btn.style.border = "1px solid #22c55e";
+      btn.style.color = "#22c55e";
+      btn.title = "🔔 College notifications ON (1:50 PM daily)";
+    } else {
+      btn.style.border = "";
+      btn.style.color = "";
+      btn.title = "🔕 College notifications OFF — click to enable";
+    }
+  };
+
+  updateVisual();
+
+  btn.addEventListener("click", () => {
+    const isOn = localStorage.getItem("aetherflow_college_notif") !== "off";
+    if (isOn) {
+      localStorage.setItem("aetherflow_college_notif", "off");
+      if (collegeNotifTimerId) clearTimeout(collegeNotifTimerId);
+      showAppAlert("🔕 College end-of-day notifications turned OFF.");
+    } else {
+      localStorage.removeItem("aetherflow_college_notif");
+      requestNotificationPermission();
+      scheduleCollegeEndNotification();
+      showAppAlert("🔔 College end-of-day notifications turned ON!\\n\\nYou'll get a reminder at 1:50 PM every weekday.");
+    }
+    updateVisual();
+  });
+}
+
 /* ----------------------------------------------------
-   Past Self Simulator System
+   College Timetable — Darshan University CV-5 (Batch-2)
+   w.e.f. 08-06-2026
 ---------------------------------------------------- */
+const collegeTimetable = {
+  monday: [
+    { time: "07:45", duration: 55, title: "2301CV514 – Theory of Architecture (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304", faculty: "SGG" },
+    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
+    { time: "09:50", duration: 50, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
+    { time: "10:40", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
+    { time: "13:00", duration: 50, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DDH" }
+  ],
+  tuesday: [
+    { time: "07:45", duration: 55, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "08:40", duration: 55, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
+    { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
+    { time: "10:40", duration: 50, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" },
+    { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
+    { time: "13:00", duration: 50, title: "2301CV502 – Engg Hydrology Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "MAJ" }
+  ],
+  wednesday: [
+    { time: "07:45", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "08:40", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
+    { time: "09:50", duration: 50, title: "2301CV514 – ToA Lab", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "SGG" },
+    { time: "10:40", duration: 50, title: "2301CV513 – Bridge & Tunnel Engg Lab", category: "work", xp: 30, stress: 15, value: 0, room: "C-104", faculty: "DAJ" },
+    { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
+    { time: "12:10", duration: 100, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
+  ],
+  thursday: [
+    { time: "07:45", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
+    { time: "08:40", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
+    { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
+    { time: "10:40", duration: 50, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
+    { time: "13:00", duration: 50, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" }
+  ],
+  friday: [
+    { time: "07:45", duration: 55, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
+    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
+    { time: "10:40", duration: 50, title: "2301CV503 – TE Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
+    { time: "12:10", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
+  ]
+};
+
+// Map day-of-week index (0=Sun..6=Sat) to timetable day key
+const timetableDayMap = { 1: "monday", 2: "tuesday", 3: "wednesday", 4: "thursday", 5: "friday" };
 
 // Simulation Scenarios Datasets
 // Simulation Scenarios Datasets
@@ -4619,6 +4721,28 @@ function setupRoutineSavesListeners() {
 function getAvailableDailyRoutines() {
   const list = [];
   
+  // 0. College Timetable — Per-Day Routines
+  const dayNames = { monday: "Monday", tuesday: "Tuesday", wednesday: "Wednesday", thursday: "Thursday", friday: "Friday" };
+  Object.entries(collegeTimetable).forEach(([dayKey, steps]) => {
+    list.push({
+      id: `college-tt-${dayKey}`,
+      title: `🎓 ${dayNames[dayKey]} — College Timetable`,
+      steps: steps,
+      category: "work",
+      isCollegeTimetable: true,
+      dayKey: dayKey
+    });
+  });
+  // Full-week college timetable (special)
+  list.push({
+    id: "college-tt-full-week",
+    title: "🎓 College Timetable — Full Week",
+    steps: collegeTimetable.monday, // placeholder; apply function uses per-day data
+    category: "work",
+    isCollegeTimetable: true,
+    isFullWeek: true
+  });
+
   // 1. Defaults
   list.push({
     id: "default-midterm",
@@ -5618,6 +5742,143 @@ function applyRoutineToEntireWeek(steps, startOfWeekDate, mode) {
     updateAgendaList();
     renderUserStats();
   });
+}
+
+// Apply the COLLEGE TIMETABLE to a week (different routine per day Mon-Fri)
+function applyCollegeTimetableToWeek(startOfWeekDate, mode) {
+  if (mode === "cancel") return;
+  
+  const weekDates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeekDate);
+    d.setDate(startOfWeekDate.getDate() + i);
+    weekDates.push({ date: getFormattedDateStr(d), dayOfWeek: d.getDay() });
+  }
+  
+  if (mode === "overwrite") {
+    const dateStrs = weekDates.map(w => w.date);
+    state.tasks = state.tasks.filter(t => !dateStrs.includes(t.date));
+  }
+  
+  // Apply per-day timetable (Mon=1..Fri=5, skip Sat/Sun)
+  weekDates.forEach(({ date, dayOfWeek }) => {
+    const dayKey = timetableDayMap[dayOfWeek];
+    if (!dayKey) return; // Skip weekends
+    
+    const steps = collegeTimetable[dayKey];
+    if (!steps) return;
+    
+    steps.forEach(step => {
+      const desc = step.room
+        ? `📍 Room: ${step.room} | 👨‍🏫 Faculty: ${step.faculty}`
+        : `Routine Block: ${step.title}`;
+      const newTask = {
+        id: generateUUID(),
+        title: step.title,
+        description: desc,
+        date: date,
+        startTime: step.time || "09:00",
+        duration: step.duration || 30,
+        category: step.category || "other",
+        completed: false,
+        xp: step.xp !== undefined ? step.xp : 20,
+        stress: step.stress !== undefined ? step.stress : 5,
+        value: step.value !== undefined ? step.value : 0
+      };
+      state.tasks.push(newTask);
+    });
+  });
+  
+  localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+  
+  triggerViewChange(() => {
+    renderCalendar();
+    updateAgendaList();
+    renderUserStats();
+  });
+  
+  showAppAlert("🎓 College timetable applied for the entire week (Mon–Fri)!");
+}
+
+/* ----------------------------------------------------
+   End-of-College Notification System
+   Sends a browser push notification at ~1:50 PM on weekdays
+   to remind you to check your schedule.
+---------------------------------------------------- */
+let collegeNotifTimerId = null;
+
+function requestNotificationPermission() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "default") {
+    Notification.requestPermission();
+  }
+}
+
+function scheduleCollegeEndNotification() {
+  if (collegeNotifTimerId) clearTimeout(collegeNotifTimerId);
+  
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  
+  // Only schedule for weekdays (Mon-Fri)
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    // It's a weekend — schedule check for Monday
+    const msUntilMonday = ((8 - dayOfWeek) % 7) * 86400000;
+    const monday = new Date(now.getTime() + msUntilMonday);
+    monday.setHours(0, 0, 0, 0);
+    collegeNotifTimerId = setTimeout(scheduleCollegeEndNotification, monday.getTime() - now.getTime());
+    return;
+  }
+  
+  // Target time: 1:50 PM IST
+  const target = new Date(now);
+  target.setHours(13, 50, 0, 0);
+  
+  let delay = target.getTime() - now.getTime();
+  
+  if (delay < 0) {
+    // Already past 1:50 PM today — schedule for tomorrow
+    delay += 86400000;
+  }
+  
+  collegeNotifTimerId = setTimeout(() => {
+    fireCollegeEndNotification();
+    // Re-schedule for next day
+    setTimeout(scheduleCollegeEndNotification, 1000);
+  }, delay);
+}
+
+function fireCollegeEndNotification() {
+  if (!("Notification" in window) || Notification.permission !== "granted") return;
+  
+  const dayKey = timetableDayMap[new Date().getDay()];
+  if (!dayKey) return; // Not a weekday
+  
+  const steps = collegeTimetable[dayKey] || [];
+  const lectureCount = steps.filter(s => !s.title.includes("Break") && !s.title.includes("SPORTS")).length;
+  
+  const notif = new Notification("🎓 College Day Ending!", {
+    body: `You had ${lectureCount} lectures/labs today (${dayKey.charAt(0).toUpperCase() + dayKey.slice(1)}). Check your AetherFlow calendar for pending tasks and tomorrow's schedule.`,
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>",
+    tag: "college-end-reminder",
+    requireInteraction: true
+  });
+  
+  notif.onclick = () => {
+    window.focus();
+    notif.close();
+  };
+}
+
+// Initialize notification system on page load
+function initCollegeNotifications() {
+  requestNotificationPermission();
+  
+  // Check if user has opted in
+  const notifEnabled = localStorage.getItem("aetherflow_college_notif") !== "off";
+  if (notifEnabled) {
+    scheduleCollegeEndNotification();
+  }
 }
 
 // Apply steps of a daily routine to a specific date
