@@ -2210,12 +2210,12 @@
     }
   ],
   "collapsedGroups": {
-    "group-academic": false,
+    "group-academic": true,
     "group-breaks": false,
     "group-wellness": true,
     "group-gaming": true,
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781328485095
+  "syncTime": 1781328490811
 }
