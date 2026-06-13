@@ -519,6 +519,106 @@ const templates = [
     duration: 30,
     groupId: "group-wellness"
   },
+  {
+    id: "tpl-deep-breathing",
+    title: "🌬️ Deep Breathing (4-7-8 Technique)",
+    category: "health",
+    xp: 15,
+    stress: -15,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-lofi-music",
+    title: "🎵 Listen to Lofi/Relaxing Music",
+    category: "health",
+    xp: 15,
+    stress: -15,
+    value: 0,
+    duration: 10,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-hydration-break",
+    title: "💧 Hydration Break (Drink water)",
+    category: "health",
+    xp: 10,
+    stress: -10,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-short-walk",
+    title: "🚶 Short Walk (Outdoor Refresh)",
+    category: "health",
+    xp: 20,
+    stress: -20,
+    value: 0,
+    duration: 10,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-digital-detox",
+    title: "📵 Screen-Free Digital Break",
+    category: "health",
+    xp: 25,
+    stress: -25,
+    value: 0,
+    duration: 15,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-brain-dump",
+    title: "✍️ Brain Dump Journaling",
+    category: "health",
+    xp: 15,
+    stress: -15,
+    value: 0,
+    duration: 10,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-shoulder-roll",
+    title: "🤸 Shoulder Rolls & Neck Stretch",
+    category: "health",
+    xp: 12,
+    stress: -12,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-splash-water",
+    title: "💦 Cold Water Face Wash",
+    category: "health",
+    xp: 10,
+    stress: -10,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-gratitude-list",
+    title: "🌸 Gratitude Check (3 Good Things)",
+    category: "health",
+    xp: 12,
+    stress: -12,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
+  {
+    id: "tpl-green-view",
+    title: "🌿 Look at Green Plants/Trees",
+    category: "health",
+    xp: 10,
+    stress: -10,
+    value: 0,
+    duration: 5,
+    groupId: "group-wellness"
+  },
   // Entertainment & Gaming
   {
     id: "tpl-genshin-resin",
