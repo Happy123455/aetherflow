@@ -2105,10 +2105,26 @@
       "colIndex": 0,
       "colWidth": 100,
       "colLeft": 0
+    },
+    {
+      "id": "r1y7x6wmqbx6ucv",
+      "title": "🎵 Listen to Lofi/Relaxing Music",
+      "description": "Action Block: 🎵 Listen to Lofi/Relaxing Music",
+      "date": "2026-06-13",
+      "startTime": "11:00",
+      "duration": null,
+      "category": "health",
+      "completed": true,
+      "xp": 30,
+      "stress": 10,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     }
   ],
   "userStats": {
-    "xp": 557,
+    "xp": 587,
     "level": 1,
     "stress": 100,
     "value": 50
@@ -2217,5 +2233,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781328817441
+  "syncTime": 1781328828625
 }
