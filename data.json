@@ -1697,38 +1697,6 @@
       "colLeft": 0
     },
     {
-      "id": "pwn8k77mqbwb2em",
-      "title": "2301CV514 – Theory of Architecture (Lec)",
-      "description": "Routine Block: 2301CV514 – Theory of Architecture (Lec)",
-      "date": "2026-06-21",
-      "startTime": "07:45",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "auo0wg0mqbwb2em",
-      "title": "2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "description": "Routine Block: 2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "date": "2026-06-21",
-      "startTime": "08:40",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
       "id": "y11nrrgmqbwc74a",
       "title": "2301CV503 – Transportation Engg (Lec)",
       "description": "Routine Block: 2301CV503 – Transportation Engg (Lec)",
@@ -2249,5 +2217,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781327450240
+  "syncTime": 1781327459224
 }
