@@ -1595,7 +1595,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "jll89zumqbwb2em",
@@ -1608,7 +1611,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "zx097krmqbwb2em",
@@ -1621,7 +1627,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "l7eigpvmqbwb2em",
@@ -1634,7 +1643,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "8gzqn69mqbwb2em",
@@ -1647,7 +1659,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ygzl0pfmqbwb2em",
@@ -1660,7 +1675,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "eqg010gmqbwb2em",
@@ -1673,98 +1691,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
-    },
-    {
-      "id": "0q1azccmqbwb2em",
-      "title": "2301CV514 – Theory of Architecture (Lec)",
-      "description": "Routine Block: 2301CV514 – Theory of Architecture (Lec)",
-      "date": "2026-06-16",
-      "startTime": "07:45",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0
-    },
-    {
-      "id": "2gg46kqmqbwb2em",
-      "title": "2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "description": "Routine Block: 2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "date": "2026-06-16",
-      "startTime": "08:40",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0
-    },
-    {
-      "id": "s1ksz49mqbwb2em",
-      "title": "☕ Break",
-      "description": "Routine Block: ☕ Break",
-      "date": "2026-06-16",
-      "startTime": "09:35",
-      "duration": 15,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -5,
-      "value": 0
-    },
-    {
-      "id": "7g2h57bmqbwb2em",
-      "title": "2301CV502 – Engg Hydrology (Lec)",
-      "description": "Routine Block: 2301CV502 – Engg Hydrology (Lec)",
-      "date": "2026-06-16",
-      "startTime": "09:50",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0
-    },
-    {
-      "id": "19ajvmhmqbwb2em",
-      "title": "2301CV503 – Transportation Engg (Lec)",
-      "description": "Routine Block: 2301CV503 – Transportation Engg (Lec)",
-      "date": "2026-06-16",
-      "startTime": "10:40",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0
-    },
-    {
-      "id": "c0af6wjmqbwb2em",
-      "title": "🍽️ Lunch Break",
-      "description": "Routine Block: 🍽️ Lunch Break",
-      "date": "2026-06-16",
-      "startTime": "11:30",
-      "duration": 40,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -10,
-      "value": 0
-    },
-    {
-      "id": "43gqke7mqbwb2em",
-      "title": "2301CV501 – ESD Lab (B2)",
-      "description": "Routine Block: 2301CV501 – ESD Lab (B2)",
-      "date": "2026-06-16",
-      "startTime": "13:00",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 30,
-      "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "938szvpmqbwb2em",
@@ -1777,7 +1707,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "5ycm46hmqbwb2em",
@@ -1790,7 +1723,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "sqy2tgkmqbwb2em",
@@ -1803,7 +1739,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "carj540mqbwb2em",
@@ -1816,7 +1755,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "gwdtib2mqbwb2em",
@@ -1829,7 +1771,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "tw6kc06mqbwb2em",
@@ -1842,7 +1787,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "1n60lksmqbwb2em",
@@ -1855,7 +1803,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ncxuikrmqbwb2em",
@@ -1868,7 +1819,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "yp27gsxmqbwb2em",
@@ -1881,7 +1835,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "rtucrigmqbwb2em",
@@ -1894,7 +1851,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "edebsbmmqbwb2em",
@@ -1907,7 +1867,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "rtp41fpmqbwb2em",
@@ -1920,7 +1883,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "efxp0fpmqbwb2em",
@@ -1933,7 +1899,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "h6puahgmqbwb2em",
@@ -1946,7 +1915,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "mvnyoqxmqbwb2em",
@@ -1959,7 +1931,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "atsxpimmqbwb2em",
@@ -1972,7 +1947,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "5w1x8wymqbwb2em",
@@ -1985,7 +1963,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "sonjmdgmqbwb2em",
@@ -1998,7 +1979,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "wqe256umqbwb2em",
@@ -2011,7 +1995,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "8bz1xetmqbwb2em",
@@ -2024,7 +2011,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "twd21v3mqbwb2em",
@@ -2037,7 +2027,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ir6g00amqbwb2em",
@@ -2050,7 +2043,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "m4c01phmqbwb2em",
@@ -2063,7 +2059,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "yb2758vmqbwb2em",
@@ -2076,7 +2075,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "sq2mbmgmqbwb2em",
@@ -2089,7 +2091,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "l2f5ln6mqbwb2em",
@@ -2102,7 +2107,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "frpixfwmqbwb2em",
@@ -2115,7 +2123,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ntby1s6mqbwb2em",
@@ -2128,7 +2139,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "pwn8k77mqbwb2em",
@@ -2141,7 +2155,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "auo0wg0mqbwb2em",
@@ -2154,7 +2171,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "mudu3a7mqbwb2em",
@@ -2167,7 +2187,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "17b8bo1mqbwb2em",
@@ -2180,7 +2203,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "2gzhr3bmqbwb2em",
@@ -2193,7 +2219,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "z214l1smqbwb2em",
@@ -2206,13 +2235,97 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "h5v4v05mqbwb2em",
       "title": "2301CV501 – ESD Lab (B2)",
       "description": "Routine Block: 2301CV501 – ESD Lab (B2)",
       "date": "2026-06-21",
+      "startTime": "13:00",
+      "duration": 50,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 15,
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
+    },
+    {
+      "id": "y11nrrgmqbwc74a",
+      "title": "2301CV503 – Transportation Engg (Lec)",
+      "description": "Routine Block: 2301CV503 – Transportation Engg (Lec)",
+      "date": "2026-06-16",
+      "startTime": "07:45",
+      "duration": 55,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 10,
+      "value": 0
+    },
+    {
+      "id": "zzah22amqbwc74a",
+      "title": "2301CV502 – Engg Hydrology (Lec)",
+      "description": "Routine Block: 2301CV502 – Engg Hydrology (Lec)",
+      "date": "2026-06-16",
+      "startTime": "08:40",
+      "duration": 55,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 10,
+      "value": 0
+    },
+    {
+      "id": "b601rl6mqbwc74a",
+      "title": "☕ Break",
+      "description": "Routine Block: ☕ Break",
+      "date": "2026-06-16",
+      "startTime": "09:35",
+      "duration": 15,
+      "category": "personal",
+      "completed": false,
+      "xp": 0,
+      "stress": -5,
+      "value": 0
+    },
+    {
+      "id": "aepbiqcmqbwc74a",
+      "title": "2301ME591 – CADD Lab (B2)",
+      "description": "Routine Block: 2301ME591 – CADD Lab (B2)",
+      "date": "2026-06-16",
+      "startTime": "10:40",
+      "duration": 50,
+      "category": "work",
+      "completed": false,
+      "xp": 30,
+      "stress": 15,
+      "value": 0
+    },
+    {
+      "id": "k6p720jmqbwc74a",
+      "title": "🍽️ Lunch Break",
+      "description": "Routine Block: 🍽️ Lunch Break",
+      "date": "2026-06-16",
+      "startTime": "11:30",
+      "duration": 40,
+      "category": "personal",
+      "completed": false,
+      "xp": 0,
+      "stress": -10,
+      "value": 0
+    },
+    {
+      "id": "ss8stsemqbwc74a",
+      "title": "2301CV502 – Engg Hydrology Lab (B2)",
+      "description": "Routine Block: 2301CV502 – Engg Hydrology Lab (B2)",
+      "date": "2026-06-16",
       "startTime": "13:00",
       "duration": 50,
       "category": "work",
@@ -2332,5 +2445,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781327342831
+  "syncTime": 1781327395595
 }
