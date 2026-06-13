@@ -1697,118 +1697,6 @@
       "colLeft": 0
     },
     {
-      "id": "ir6g00amqbwb2em",
-      "title": "2301CV514 – Theory of Architecture (Lec)",
-      "description": "Routine Block: 2301CV514 – Theory of Architecture (Lec)",
-      "date": "2026-06-20",
-      "startTime": "07:45",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "m4c01phmqbwb2em",
-      "title": "2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "description": "Routine Block: 2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "date": "2026-06-20",
-      "startTime": "08:40",
-      "duration": 55,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "yb2758vmqbwb2em",
-      "title": "☕ Break",
-      "description": "Routine Block: ☕ Break",
-      "date": "2026-06-20",
-      "startTime": "09:35",
-      "duration": 15,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -5,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "sq2mbmgmqbwb2em",
-      "title": "2301CV502 – Engg Hydrology (Lec)",
-      "description": "Routine Block: 2301CV502 – Engg Hydrology (Lec)",
-      "date": "2026-06-20",
-      "startTime": "09:50",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "l2f5ln6mqbwb2em",
-      "title": "2301CV503 – Transportation Engg (Lec)",
-      "description": "Routine Block: 2301CV503 – Transportation Engg (Lec)",
-      "date": "2026-06-20",
-      "startTime": "10:40",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "frpixfwmqbwb2em",
-      "title": "🍽️ Lunch Break",
-      "description": "Routine Block: 🍽️ Lunch Break",
-      "date": "2026-06-20",
-      "startTime": "11:30",
-      "duration": 40,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "ntby1s6mqbwb2em",
-      "title": "2301CV501 – ESD Lab (B2)",
-      "description": "Routine Block: 2301CV501 – ESD Lab (B2)",
-      "date": "2026-06-20",
-      "startTime": "13:00",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 30,
-      "stress": 15,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
       "id": "pwn8k77mqbwb2em",
       "title": "2301CV514 – Theory of Architecture (Lec)",
       "description": "Routine Block: 2301CV514 – Theory of Architecture (Lec)",
@@ -1835,86 +1723,6 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "mudu3a7mqbwb2em",
-      "title": "☕ Break",
-      "description": "Routine Block: ☕ Break",
-      "date": "2026-06-21",
-      "startTime": "09:35",
-      "duration": 15,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -5,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "17b8bo1mqbwb2em",
-      "title": "2301CV502 – Engg Hydrology (Lec)",
-      "description": "Routine Block: 2301CV502 – Engg Hydrology (Lec)",
-      "date": "2026-06-21",
-      "startTime": "09:50",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "2gzhr3bmqbwb2em",
-      "title": "2301CV503 – Transportation Engg (Lec)",
-      "description": "Routine Block: 2301CV503 – Transportation Engg (Lec)",
-      "date": "2026-06-21",
-      "startTime": "10:40",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "z214l1smqbwb2em",
-      "title": "🍽️ Lunch Break",
-      "description": "Routine Block: 🍽️ Lunch Break",
-      "date": "2026-06-21",
-      "startTime": "11:30",
-      "duration": 40,
-      "category": "personal",
-      "completed": false,
-      "xp": 0,
-      "stress": -10,
-      "value": 0,
-      "colIndex": 0,
-      "colWidth": 100,
-      "colLeft": 0
-    },
-    {
-      "id": "h5v4v05mqbwb2em",
-      "title": "2301CV501 – ESD Lab (B2)",
-      "description": "Routine Block: 2301CV501 – ESD Lab (B2)",
-      "date": "2026-06-21",
-      "startTime": "13:00",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 30,
-      "stress": 15,
       "value": 0,
       "colIndex": 0,
       "colWidth": 100,
@@ -2232,7 +2040,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "1z4lrxxmqbwcjlq",
@@ -2245,7 +2056,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "2x4tjrkmqbwcjlq",
@@ -2258,7 +2072,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "d6pg4vomqbwcjlq",
@@ -2271,7 +2088,10 @@
       "completed": false,
       "xp": 30,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "syv4oakmqbwcjlq",
@@ -2284,7 +2104,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "rsztb55mqbwcjlq",
@@ -2297,7 +2120,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "28l70j7mqbwcjlq",
@@ -2423,5 +2249,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781327411774
+  "syncTime": 1781327450240
 }
