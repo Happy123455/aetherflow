@@ -2211,11 +2211,11 @@
   ],
   "collapsedGroups": {
     "group-academic": true,
-    "group-breaks": false,
+    "group-breaks": true,
     "group-wellness": true,
     "group-gaming": true,
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781328604893
+  "syncTime": 1781328617409
 }
