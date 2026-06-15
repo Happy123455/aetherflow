@@ -2114,16 +2114,19 @@
       "startTime": "14:30",
       "duration": 15,
       "category": "health",
-      "completed": true,
+      "completed": false,
       "xp": 30,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     }
   ],
   "userStats": {
-    "xp": 587,
+    "xp": 557,
     "level": 1,
-    "stress": 100,
+    "stress": 90,
     "value": 50
   },
   "customTemplates": [
@@ -2230,5 +2233,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781518239791
+  "syncTime": 1781518303425
 }
