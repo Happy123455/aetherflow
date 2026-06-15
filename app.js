@@ -950,6 +950,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSyncDialogListeners();
   setupCollegeNotifToggle();
   setupJournalDialogListeners();
+  setupLoadTimetableListener();
 
   // Setup Zoom Slider Listener
   const zoomSlider = document.getElementById("zoom-slider");
@@ -1231,6 +1232,16 @@ function renderCalendar() {
       zoomContainer.style.display = "";
     } else {
       zoomContainer.style.display = "none";
+    }
+  }
+
+  // Adjust Load Timetable button visibility
+  const loadTimetableBtn = document.getElementById("btn-load-timetable");
+  if (loadTimetableBtn) {
+    if (state.currentView === "day" || state.currentView === "week") {
+      loadTimetableBtn.style.display = "inline-flex";
+    } else {
+      loadTimetableBtn.style.display = "none";
     }
   }
 
@@ -3576,47 +3587,46 @@ function setupCollegeNotifToggle() {
 ---------------------------------------------------- */
 const collegeTimetable = {
   monday: [
-    { time: "07:45", duration: 55, title: "2301CV514 – Theory of Architecture (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304", faculty: "SGG" },
-    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "07:45", duration: 55, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304 / G-203", faculty: "SGG / DAJ" },
+    { time: "08:40", duration: 55, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304 / G-203", faculty: "SGG / DAJ" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
     { time: "09:50", duration: 50, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
     { time: "10:40", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "13:00", duration: 50, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DDH" }
+    { time: "12:10", duration: 100, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "DDH" }
   ],
   tuesday: [
     { time: "07:45", duration: 55, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
     { time: "08:40", duration: 55, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
-    { time: "10:40", duration: 50, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" },
+    { time: "09:50", duration: 100, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "13:00", duration: 50, title: "2301CV502 – Engg Hydrology Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "MAJ" }
+    { time: "12:10", duration: 100, title: "2301CV502 – Engg Hydrology Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "MAJ" }
   ],
   wednesday: [
-    { time: "07:45", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
-    { time: "08:40", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "07:45", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "08:40", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
-    { time: "09:50", duration: 50, title: "2301CV514 – ToA Lab", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "SGG" },
-    { time: "10:40", duration: 50, title: "2301CV513 – Bridge & Tunnel Engg Lab", category: "work", xp: 30, stress: 15, value: 0, room: "C-104", faculty: "DAJ" },
+    { time: "09:50", duration: 100, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203 / C-104", faculty: "SGG / DAJ" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "12:10", duration: 100, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
+    { time: "12:10", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "fitness", xp: 20, stress: -15, value: 0 }
   ],
   thursday: [
-    { time: "07:45", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
-    { time: "08:40", duration: 55, title: "2301CV501 – Elem. Structural Design (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
+    { time: "07:45", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
+    { time: "08:40", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
-    { time: "10:40", duration: 50, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DDH" },
+    { time: "09:50", duration: 100, title: "2301CV503 – TE Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "Lab C-104", faculty: "DAJ" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "13:00", duration: 50, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" }
+    { time: "12:10", duration: 100, title: "2301ME591 – CADD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "CC G-204", faculty: "DKP" }
   ],
   friday: [
     { time: "07:45", duration: 55, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
-    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel / 2301CV514 – ToA (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203 / G-304", faculty: "DAJ / SGG" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
-    { time: "10:40", duration: 50, title: "2301CV503 – TE Lab (B2)", category: "work", xp: 30, stress: 15, value: 0, room: "G-203", faculty: "DAJ" },
+    { time: "09:50", duration: 100, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "DDH" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "12:10", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
-    { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
+    { time: "12:10", duration: 100, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
   ]
 };
 
@@ -6002,10 +6012,13 @@ function applyRoutineStepsToDate(steps, targetDate, mode) {
 
   // Create new tasks from steps
   steps.forEach(step => {
+    const desc = step.room
+      ? `📍 Room: ${step.room} | 👨‍🏫 Faculty: ${step.faculty}`
+      : `Routine Block: ${step.title}`;
     const newTask = {
       id: generateUUID(),
       title: step.title,
-      description: `Routine Block: ${step.title}`,
+      description: desc,
       date: targetDate,
       startTime: step.time || "09:00",
       duration: step.duration || 30,
@@ -6563,6 +6576,44 @@ function setupJournalDialogListeners() {
       renderCalendar();
       updateAgendaList();
     });
+  });
+}
+
+function setupLoadTimetableListener() {
+  const btn = document.getElementById("btn-load-timetable");
+  if (!btn) return;
+  
+  btn.addEventListener("click", () => {
+    soundEffects.play("click");
+    
+    if (state.currentView === "week") {
+      const monday = getStartOfWeek(state.currentDate);
+      showAppConfirm("🎓 Load college timetable for this week (Mon-Fri)?", (confirmed) => {
+        if (!confirmed) return;
+        showAppConfirm("Overwrite existing tasks for this week, or append alongside them?\n\nChoose Confirm to OVERWRITE, or Cancel to APPEND.", (overwrite) => {
+          applyCollegeTimetableToWeek(monday, overwrite ? "overwrite" : "append");
+        });
+      });
+    } else if (state.currentView === "day") {
+      const activeDateStr = getFormattedDateStr(state.currentDate);
+      const d = new Date(state.currentDate);
+      const dayOfWeek = d.getDay();
+      const dayKey = timetableDayMap[dayOfWeek];
+      
+      if (!dayKey) {
+        showAppAlert("No lectures scheduled for weekends!");
+        return;
+      }
+      
+      showAppConfirm(`🎓 Load college lectures for ${dayKey.toUpperCase()}?`, (confirmed) => {
+        if (!confirmed) return;
+        showAppConfirm("Overwrite existing tasks for today, or append alongside them?\n\nChoose Confirm to OVERWRITE, or Cancel to APPEND.", (overwrite) => {
+          const steps = collegeTimetable[dayKey];
+          applyRoutineStepsToDate(steps, activeDateStr, overwrite ? "overwrite" : "append");
+          showAppAlert(`🎓 Lectures loaded for ${dayKey.toUpperCase()}!`);
+        });
+      });
+    }
   });
 }
 
