@@ -836,7 +836,8 @@ const state = {
   groups: [],
   collapsedGroups: {},
   editingTemplateId: null,
-  activeTemplateTab: "blocks"
+  activeTemplateTab: "blocks",
+  journalViewMode: "grid"
 };
 
 // Order for switching zoom directions
@@ -950,6 +951,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupSyncDialogListeners();
   setupCollegeNotifToggle();
   setupJournalDialogListeners();
+  setupJournalTextEditDialogListeners();
   setupLoadTimetableListener();
 
   // Setup Zoom Slider Listener
@@ -2013,7 +2015,49 @@ function updateLiveTimeIndicator() {
   // First clean up any existing indicator lines
   document.querySelectorAll(".live-time-indicator").forEach(el => el.remove());
   
-  // Live line is only visual in Day and Week views
+  // Live indicator for journal view
+  if (state.currentView === "journal") {
+    document.querySelectorAll(".journal-cell-live").forEach(el => el.classList.remove("journal-cell-live"));
+    document.querySelectorAll(".journal-live-dot").forEach(el => el.remove());
+    document.querySelectorAll(".notepad-line.active").forEach(el => el.classList.remove("active"));
+    document.querySelectorAll(".notepad-time-indicator").forEach(el => el.remove());
+
+    const activeDateStr = getFormattedDateStr(state.currentDate);
+    const todayStr = getFormattedDateStr(new Date());
+
+    if (activeDateStr === todayStr) {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+      if (state.journalViewMode === "grid") {
+        const slotIdx = (now.getHours() * 12) + Math.floor(now.getMinutes() / 5);
+        const liveCell = document.querySelector(`.journal-cell[data-index="${slotIdx}"]`);
+        if (liveCell) {
+          liveCell.classList.add("journal-cell-live");
+          const dot = document.createElement("div");
+          dot.className = "journal-live-dot";
+          liveCell.appendChild(dot);
+        }
+      } else {
+        // Notepad view active highlight
+        const lines = document.querySelectorAll(".notepad-line");
+        lines.forEach(line => {
+          const startMin = parseInt(line.getAttribute("data-start-min"), 10);
+          const endMin = parseInt(line.getAttribute("data-end-min"), 10);
+          if (nowMinutes >= startMin && nowMinutes < endMin) {
+            line.classList.add("active");
+            
+            const liveBadge = document.createElement("div");
+            liveBadge.className = "notepad-time-indicator";
+            liveBadge.innerText = "Live";
+            line.appendChild(liveBadge);
+          }
+        });
+      }
+    }
+    return;
+  }
+
   if (state.currentView !== "day" && state.currentView !== "week") return;
   
   const todayStr = getFormattedDateStr(new Date());
@@ -6252,6 +6296,11 @@ function openJournalAssignDialog(minSlot, maxSlot) {
     titleInput.value = "";
   }
 
+  const descInput = document.getElementById("journal-task-desc");
+  if (descInput) {
+    descInput.value = "";
+  }
+
   // Check default radio button
   const defaultRadio = dialog.querySelector('input[name="journal-category"][value="work"]');
   if (defaultRadio) defaultRadio.checked = true;
@@ -6277,6 +6326,59 @@ function renderJournalView(parent) {
   const actions = document.createElement("div");
   actions.className = "journal-header-actions";
 
+  // Calendar Datepicker
+  const dateInput = document.createElement("input");
+  dateInput.type = "date";
+  dateInput.className = "btn btn-secondary";
+  dateInput.style.color = "white";
+  dateInput.style.padding = "0.4rem 0.8rem";
+  dateInput.style.borderRadius = "8px";
+  dateInput.style.border = "1px solid var(--border-card)";
+  dateInput.style.background = "rgba(0,0,0,0.2)";
+  dateInput.value = activeDateStr;
+  dateInput.addEventListener("change", (e) => {
+    soundEffects.play("click");
+    state.currentDate = new Date(e.target.value + "T00:00:00");
+    updateRangeLabel();
+    renderCalendar();
+  });
+  actions.appendChild(dateInput);
+
+  // View Mode Toggle Button
+  const toggleViewBtn = document.createElement("button");
+  toggleViewBtn.className = "btn btn-secondary";
+  const viewModeIcon = state.journalViewMode === "grid" ? "list" : "grid";
+  const viewModeText = state.journalViewMode === "grid" ? "Notepad View" : "Grid View";
+  toggleViewBtn.innerHTML = `<i data-lucide="${viewModeIcon}" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i> ${viewModeText}`;
+  toggleViewBtn.addEventListener("click", () => {
+    soundEffects.play("click");
+    state.journalViewMode = state.journalViewMode === "grid" ? "notepad" : "grid";
+    renderCalendar();
+  });
+  actions.appendChild(toggleViewBtn);
+
+  if (state.journalViewMode === "notepad") {
+    // Bulk Edit button
+    const editTextBtn = document.createElement("button");
+    editTextBtn.className = "btn btn-secondary";
+    editTextBtn.innerHTML = `<i data-lucide="edit-3" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i> Bulk Edit`;
+    editTextBtn.addEventListener("click", () => {
+      soundEffects.play("click");
+      openJournalTextEditDialog();
+    });
+    actions.appendChild(editTextBtn);
+
+    // Copy Day button
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "btn btn-secondary";
+    copyBtn.innerHTML = `<i data-lucide="copy" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i> Copy Day`;
+    copyBtn.addEventListener("click", () => {
+      soundEffects.play("click");
+      copyNotepadTextToClipboard();
+    });
+    actions.appendChild(copyBtn);
+  }
+
   // Clear Day button
   const clearBtn = document.createElement("button");
   clearBtn.className = "btn btn-danger";
@@ -6293,218 +6395,237 @@ function renderJournalView(parent) {
       });
     });
   });
-
   actions.appendChild(clearBtn);
+
   header.appendChild(title);
   header.appendChild(actions);
   root.appendChild(header);
 
-  // 2. Grid Wrapper
-  const gridWrap = document.createElement("div");
-  gridWrap.className = "journal-grid-wrapper";
+  // Global mouseup release listener
+  let handleMouseUp = null;
 
-  // Column Headers (Hour + :00, :05, :10, ..., :55)
-  const colHeaders = document.createElement("div");
-  colHeaders.className = "journal-column-headers";
-  colHeaders.innerHTML = `<div class="journal-hour-header-label">Hour</div>`;
-  for (let m = 0; m < 60; m += 5) {
-    const colLabel = document.createElement("div");
-    colLabel.innerText = `:${String(m).padStart(2, '0')}`;
-    colHeaders.appendChild(colLabel);
-  }
-  gridWrap.appendChild(colHeaders);
+  if (state.journalViewMode === "grid") {
+    // 2. Grid Wrapper
+    const gridWrap = document.createElement("div");
+    gridWrap.className = "journal-grid-wrapper";
 
-  // 3. Grid Cells Processing
-  const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
-  const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
-
-  // Map tasks to 288 slots
-  const cellTasks = new Array(288).fill(null);
-  filteredTasks.forEach(task => {
-    if (!task.startTime) return;
-    const parts = task.startTime.split(":");
-    const hours = parseInt(parts[0], 10);
-    const minutes = parseInt(parts[1], 10);
-    
-    const startSlot = (hours * 12) + Math.floor(minutes / 5);
-    const durationSlots = Math.ceil((task.duration || 30) / 5);
-    
-    for (let i = 0; i < durationSlots; i++) {
-      const idx = startSlot + i;
-      if (idx < 288) {
-        cellTasks[idx] = {
-          task: task,
-          isStart: i === 0,
-          isEnd: i === durationSlots - 1,
-          isMiddle: i > 0 && i < durationSlots - 1,
-          slotOffset: i,
-          totalSlots: durationSlots
-        };
-      }
+    // Column Headers (Hour + :00, :05, :10, ..., :55)
+    const colHeaders = document.createElement("div");
+    colHeaders.className = "journal-column-headers";
+    colHeaders.innerHTML = `<div class="journal-hour-header-label">Hour</div>`;
+    for (let m = 0; m < 60; m += 5) {
+      const colLabel = document.createElement("div");
+      colLabel.innerText = `:${String(m).padStart(2, '0')}`;
+      colHeaders.appendChild(colLabel);
     }
-  });
+    gridWrap.appendChild(colHeaders);
 
-  // 4. Render 24 rows
-  for (let h = 0; h < 24; h++) {
-    const row = document.createElement("div");
-    row.className = "journal-row";
+    // 3. Grid Cells Processing
+    const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+    const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
 
-    // Hour label (e.g. 09:00 AM)
-    const hourLabel = document.createElement("div");
-    hourLabel.className = "journal-hour-label";
-    hourLabel.innerText = formatHourLabel(h);
-    row.appendChild(hourLabel);
-
-    // 12 cells for 5-minute slots
-    for (let m = 0; m < 12; m++) {
-      const cellIdx = (h * 12) + m;
-      const cell = document.createElement("div");
-      cell.className = "journal-cell";
-      cell.setAttribute("data-index", cellIdx);
-
-      const cellData = cellTasks[cellIdx];
-      if (cellData) {
-        // Cell is occupied by a task
-        cell.classList.add("occupied");
-        
-        // Add category class
-        const cat = cellData.task.category || "other";
-        let catClass = "type-other";
-        if (cat === "work") catClass = "type-work";
-        else if (cat === "health") catClass = "type-break";
-        else if (cat === "personal") catClass = "type-chore";
-        cell.classList.add(catClass);
-
-        // Add continuity classes
-        if (cellData.totalSlots === 1) {
-          cell.classList.add("occupied-single");
-        } else if (cellData.isStart) {
-          cell.classList.add("occupied-start");
-        } else if (cellData.isEnd) {
-          cell.classList.add("occupied-end");
-        } else {
-          cell.classList.add("occupied-middle");
+    // Map tasks to 288 slots
+    const cellTasks = new Array(288).fill(null);
+    filteredTasks.forEach(task => {
+      if (!task.startTime) return;
+      const parts = task.startTime.split(":");
+      const hours = parseInt(parts[0], 10);
+      const minutes = parseInt(parts[1], 10);
+      
+      const startSlot = (hours * 12) + Math.floor(minutes / 5);
+      const durationSlots = Math.ceil((task.duration || 30) / 5);
+      
+      for (let i = 0; i < durationSlots; i++) {
+        const idx = startSlot + i;
+        if (idx < 288) {
+          cellTasks[idx] = {
+            task: task,
+            isStart: i === 0,
+            isEnd: i === durationSlots - 1,
+            isMiddle: i > 0 && i < durationSlots - 1,
+            slotOffset: i,
+            totalSlots: durationSlots
+          };
         }
-
-        // Render title inside first cell
-        if (cellData.isStart) {
-          const labelSpan = document.createElement("span");
-          labelSpan.className = "journal-cell-label";
-          labelSpan.innerText = cellData.task.title;
-          cell.appendChild(labelSpan);
-        }
-
-        cell.title = `${cellData.task.title} (${cellData.task.startTime}, ${cellData.task.duration} min)`;
-
-        // Clicking occupied cell opens standard edit/delete modal
-        cell.addEventListener("click", () => {
-          soundEffects.play("click");
-          openTaskDialog(cellData.task.id);
-        });
-
-      } else {
-        // Cell is empty - attach drag-select and touch-swipe handlers
-        
-        // Mouse Down (Start Selection)
-        cell.addEventListener("mousedown", (e) => {
-          if (e.button !== 0) return; // Only left click
-          soundEffects.play("click");
-          journalSelection.isSelecting = true;
-          journalSelection.startIndex = cellIdx;
-          journalSelection.endIndex = cellIdx;
-          updateSelectionHighlight();
-        });
-
-        // Mouse Enter (Update Selection)
-        cell.addEventListener("mouseenter", () => {
-          if (journalSelection.isSelecting) {
-            journalSelection.endIndex = cellIdx;
-            updateSelectionHighlight();
-          }
-        });
-      }
-
-      row.appendChild(cell);
-    }
-    gridWrap.appendChild(row);
-  }
-
-  root.appendChild(gridWrap);
-  parent.appendChild(root);
-
-  // Selection visual feedback update
-  function updateSelectionHighlight() {
-    const cells = root.querySelectorAll(".journal-cell");
-    const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
-    const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
-
-    cells.forEach(c => {
-      const idx = parseInt(c.getAttribute("data-index"), 10);
-      if (idx >= min && idx <= max && !c.classList.contains("occupied")) {
-        c.classList.add("selected");
-      } else {
-        c.classList.remove("selected");
       }
     });
+
+    // 4. Render 24 rows
+    for (let h = 0; h < 24; h++) {
+      const row = document.createElement("div");
+      row.className = "journal-row";
+
+      // Hour label (e.g. 09:00 AM)
+      const hourLabel = document.createElement("div");
+      hourLabel.className = "journal-hour-label";
+      hourLabel.innerText = formatHourLabel(h);
+      row.appendChild(hourLabel);
+
+      // 12 cells for 5-minute slots
+      for (let m = 0; m < 12; m++) {
+        const cellIdx = (h * 12) + m;
+        const cell = document.createElement("div");
+        cell.className = "journal-cell";
+        cell.setAttribute("data-index", cellIdx);
+
+        const cellData = cellTasks[cellIdx];
+        if (cellData) {
+          // Cell is occupied by a task
+          cell.classList.add("occupied");
+          
+          // Add category class
+          const cat = cellData.task.category || "other";
+          let catClass = "type-other";
+          if (cat === "work") catClass = "type-work";
+          else if (cat === "health") catClass = "type-break";
+          else if (cat === "personal") catClass = "type-chore";
+          cell.classList.add(catClass);
+
+          // Add continuity classes
+          if (cellData.totalSlots === 1) {
+            cell.classList.add("occupied-single");
+          } else if (cellData.isStart) {
+            cell.classList.add("occupied-start");
+          } else if (cellData.isEnd) {
+            cell.classList.add("occupied-end");
+          } else {
+            cell.classList.add("occupied-middle");
+          }
+
+          // Render title inside first cell
+          if (cellData.isStart) {
+            const labelSpan = document.createElement("span");
+            labelSpan.className = "journal-cell-label";
+            labelSpan.innerText = cellData.task.title;
+            cell.appendChild(labelSpan);
+          }
+
+          cell.title = `${cellData.task.title} (${cellData.task.startTime}, ${cellData.task.duration} min)`;
+
+          // Clicking occupied cell opens standard edit/delete modal
+          cell.addEventListener("click", () => {
+            soundEffects.play("click");
+            openTaskDialog(cellData.task.id);
+          });
+
+        } else {
+          // Cell is empty - attach drag-select and touch-swipe handlers
+          
+          // Mouse Down (Start Selection)
+          cell.addEventListener("mousedown", (e) => {
+            if (e.button !== 0) return; // Only left click
+            soundEffects.play("click");
+            journalSelection.isSelecting = true;
+            journalSelection.startIndex = cellIdx;
+            journalSelection.endIndex = cellIdx;
+            updateSelectionHighlight();
+          });
+
+          // Mouse Enter (Update Selection)
+          cell.addEventListener("mouseenter", () => {
+            if (journalSelection.isSelecting) {
+              journalSelection.endIndex = cellIdx;
+              updateSelectionHighlight();
+            }
+          });
+        }
+
+        row.appendChild(cell);
+      }
+      gridWrap.appendChild(row);
+    }
+
+    root.appendChild(gridWrap);
+
+    // Selection visual feedback update
+    function updateSelectionHighlight() {
+      const cells = root.querySelectorAll(".journal-cell");
+      const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+      const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+
+      cells.forEach(c => {
+        const idx = parseInt(c.getAttribute("data-index"), 10);
+        if (idx >= min && idx <= max && !c.classList.contains("occupied")) {
+          c.classList.add("selected");
+        } else {
+          c.classList.remove("selected");
+        }
+      });
+    }
+
+    // Global mouseup release listener
+    handleMouseUp = () => {
+      if (journalSelection.isSelecting) {
+        journalSelection.isSelecting = false;
+        const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+        const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+        openJournalAssignDialog(min, max);
+      }
+    };
+
+    // Touch Swipe Handlers for Mobile Devices
+    root.addEventListener("touchstart", (e) => {
+      const touch = e.touches[0];
+      const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+      const cell = elem ? elem.closest('.journal-cell') : null;
+      if (cell && !cell.classList.contains("occupied")) {
+        const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
+        soundEffects.play("click");
+        journalSelection.isSelecting = true;
+        journalSelection.startIndex = cellIdx;
+        journalSelection.endIndex = cellIdx;
+        updateSelectionHighlight();
+        e.preventDefault(); // Prevent scrolling while swiping
+      }
+    }, { passive: false });
+
+    root.addEventListener("touchmove", (e) => {
+      if (!journalSelection.isSelecting) return;
+      const touch = e.touches[0];
+      const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+      const cell = elem ? elem.closest('.journal-cell') : null;
+      if (cell && !cell.classList.contains("occupied")) {
+        const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
+        journalSelection.endIndex = cellIdx;
+        updateSelectionHighlight();
+      }
+      e.preventDefault(); // Prevent scrolling while swiping
+    }, { passive: false });
+
+    root.addEventListener("touchend", () => {
+      if (journalSelection.isSelecting) {
+        journalSelection.isSelecting = false;
+        const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+        const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+        openJournalAssignDialog(min, max);
+      }
+    });
+
+    // Attach global pointerup listener
+    window.addEventListener("mouseup", handleMouseUp);
+  } else {
+    // Render Notepad View
+    const notepadWrap = document.createElement("div");
+    notepadWrap.className = "notepad-paper";
+    renderNotepadView(notepadWrap, activeDateStr);
+    root.appendChild(notepadWrap);
   }
 
-  // Global mouseup release listener
-  const handleMouseUp = () => {
-    if (journalSelection.isSelecting) {
-      journalSelection.isSelecting = false;
-      const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
-      const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
-      openJournalAssignDialog(min, max);
-    }
-  };
+  parent.appendChild(root);
 
-  // Touch Swipe Handlers for Mobile Devices
-  root.addEventListener("touchstart", (e) => {
-    const touch = e.touches[0];
-    const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-    const cell = elem ? elem.closest('.journal-cell') : null;
-    if (cell && !cell.classList.contains("occupied")) {
-      const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
-      soundEffects.play("click");
-      journalSelection.isSelecting = true;
-      journalSelection.startIndex = cellIdx;
-      journalSelection.endIndex = cellIdx;
-      updateSelectionHighlight();
-      e.preventDefault(); // Prevent scrolling while swiping
-    }
-  }, { passive: false });
+  // Trigger live indicators update
+  setTimeout(() => {
+    updateLiveTimeIndicator();
+  }, 50);
 
-  root.addEventListener("touchmove", (e) => {
-    if (!journalSelection.isSelecting) return;
-    const touch = e.touches[0];
-    const elem = document.elementFromPoint(touch.clientX, touch.clientY);
-    const cell = elem ? elem.closest('.journal-cell') : null;
-    if (cell && !cell.classList.contains("occupied")) {
-      const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
-      journalSelection.endIndex = cellIdx;
-      updateSelectionHighlight();
-    }
-    e.preventDefault(); // Prevent scrolling while swiping
-  }, { passive: false });
-
-  root.addEventListener("touchend", () => {
-    if (journalSelection.isSelecting) {
-      journalSelection.isSelecting = false;
-      const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
-      const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
-      openJournalAssignDialog(min, max);
-    }
-  });
-
-  // Attach and cleanup global pointerup listener
-  window.addEventListener("mouseup", handleMouseUp);
-  
   // Clean up when leaving view
   const observer = new MutationObserver((mutations) => {
     mutations.forEach(m => {
       m.removedNodes.forEach(n => {
         if (n === root) {
-          window.removeEventListener("mouseup", handleMouseUp);
+          if (handleMouseUp) {
+            window.removeEventListener("mouseup", handleMouseUp);
+          }
           observer.disconnect();
         }
       });
@@ -6547,6 +6668,7 @@ function setupJournalDialogListeners() {
 
     const titleInput = document.getElementById("journal-task-title");
     const categoryInput = form.querySelector('input[name="journal-category"]:checked');
+    const descInput = document.getElementById("journal-task-desc");
 
     if (!titleInput || !categoryInput || !state.tempJournalSelection) {
       dialog.close();
@@ -6561,6 +6683,7 @@ function setupJournalDialogListeners() {
       startTime: state.tempJournalSelection.startTime,
       duration: state.tempJournalSelection.duration,
       category: categoryInput.value,
+      description: descInput ? descInput.value.trim() : "",
       completed: true
     };
 
@@ -6616,6 +6739,268 @@ function setupLoadTimetableListener() {
     }
   });
 }
+
+/* ----------------------------------------------------
+   Ruled Notepad View Helpers & Bulk Editor
+   ---------------------------------------------------- */
+
+function escapeHTML(str) {
+  if (!str) return "";
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
+function renderNotepadView(container, activeDateStr) {
+  container.innerHTML = "";
+
+  const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+  const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
+
+  // Sort by start time
+  filteredTasks.sort((a, b) => getMinutes(a.startTime) - getMinutes(b.startTime));
+
+  if (filteredTasks.length === 0) {
+    const emptyLine = document.createElement("div");
+    emptyLine.className = "notepad-line";
+    emptyLine.innerHTML = `<span style="color: var(--text-muted); font-style: italic; font-size: 0.9rem;">No entries recorded for today. Click "Bulk Edit" or click "Grid View" to add time blocks.</span>`;
+    container.appendChild(emptyLine);
+    return;
+  }
+
+  filteredTasks.forEach(task => {
+    const line = document.createElement("div");
+    line.className = "notepad-line";
+    
+    // Compute start and end minutes for active highlighting
+    const startMin = getMinutes(task.startTime);
+    const endMin = startMin + (task.duration || 30);
+    line.setAttribute("data-start-min", startMin);
+    line.setAttribute("data-end-min", endMin);
+
+    // Format times nicely in 12h format
+    const start12 = formatTime12h(task.startTime);
+    const end24 = slotToTime24(Math.min(288, (startMin + (task.duration || 30)) / 5));
+    const end12 = formatTime12h(end24);
+
+    // Categories styling
+    const cat = task.category || "other";
+    const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+    let catClass = `cat-${cat}`;
+    if (cat === "health") catClass = "cat-break";
+    if (cat === "personal") catClass = "cat-chore";
+
+    let noteText = "";
+    if (task.description) {
+      noteText = `<span class="notepad-line-note">| ${escapeHTML(task.description)}</span>`;
+    }
+
+    line.innerHTML = `
+      <span class="notepad-line-time">${start12} - ${end12}</span>
+      <span class="notepad-line-cat ${catClass}">${catLabel}</span>
+      <span class="notepad-line-content">${escapeHTML(task.title)} ${noteText}</span>
+    `;
+
+    // Click to open edit dialog
+    line.addEventListener("click", () => {
+      soundEffects.play("click");
+      openTaskDialog(task.id);
+    });
+
+    container.appendChild(line);
+  });
+}
+
+function openJournalTextEditDialog() {
+  const dialog = document.getElementById("journal-text-edit-dialog");
+  const textarea = document.getElementById("journal-text-edit-area");
+  if (!dialog || !textarea) return;
+
+  const activeDateStr = getFormattedDateStr(state.currentDate);
+  const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+  dayTasks.sort((a, b) => getMinutes(a.startTime) - getMinutes(b.startTime));
+
+  let text = "";
+  dayTasks.forEach(task => {
+    const startMin = getMinutes(task.startTime);
+    const endMin = startMin + (task.duration || 30);
+    const start12 = formatTime12h(task.startTime);
+    const end24 = slotToTime24(Math.min(288, endMin / 5));
+    const end12 = formatTime12h(end24);
+
+    const cat = task.category || "other";
+    let catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+    if (cat === "health") catLabel = "Break";
+    if (cat === "personal") catLabel = "Chore";
+
+    const notePart = task.description ? ` | ${task.description}` : "";
+    text += `${start12} - ${end12} [${catLabel}] ${task.title}${notePart}\n`;
+  });
+
+  textarea.value = text;
+  dialog.showModal();
+  soundEffects.play("click");
+}
+
+function copyNotepadTextToClipboard() {
+  const activeDateStr = getFormattedDateStr(state.currentDate);
+  const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+  dayTasks.sort((a, b) => getMinutes(a.startTime) - getMinutes(b.startTime));
+
+  let text = `Schedule for ${state.currentDate.toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}:\n\n`;
+  if (dayTasks.length === 0) {
+    text += "No tasks scheduled.\n";
+  } else {
+    dayTasks.forEach(task => {
+      const startMin = getMinutes(task.startTime);
+      const endMin = startMin + (task.duration || 30);
+      const start12 = formatTime12h(task.startTime);
+      const end24 = slotToTime24(Math.min(288, endMin / 5));
+      const end12 = formatTime12h(end24);
+
+      const cat = task.category || "other";
+      let catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+      if (cat === "health") catLabel = "Break";
+      if (cat === "personal") catLabel = "Chore";
+
+      const notePart = task.description ? ` (Note: ${task.description})` : "";
+      text += `- ${start12} - ${end12} [${catLabel}] ${task.title}${notePart}\n`;
+    });
+  }
+
+  navigator.clipboard.writeText(text).then(() => {
+    showAppAlert("📋 Schedule copied to clipboard!");
+  }).catch(err => {
+    console.error("Failed to copy text: ", err);
+    showAppAlert("Failed to copy schedule to clipboard.");
+  });
+}
+
+function setupJournalTextEditDialogListeners() {
+  const dialog = document.getElementById("journal-text-edit-dialog");
+  if (!dialog) return;
+
+  const form = document.getElementById("journal-text-edit-form");
+  const cancelBtn = document.getElementById("btn-journal-text-edit-cancel");
+  const closeBtn = document.getElementById("btn-close-journal-text-edit-dialog");
+  const textarea = document.getElementById("journal-text-edit-area");
+
+  closeBtn.addEventListener("click", () => {
+    dialog.close();
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    dialog.close();
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    soundEffects.play("coin");
+
+    const text = textarea.value;
+    const activeDateStr = getFormattedDateStr(state.currentDate);
+
+    const parsedTasks = parseNotepadText(text, activeDateStr);
+    if (!parsedTasks) {
+      showAppAlert("⚠️ Failed to parse some lines. Please check the format!");
+      return;
+    }
+
+    // Filter out previous tasks for this date and push parsed ones
+    state.tasks = state.tasks.filter(t => t.date !== activeDateStr);
+    state.tasks.push(...parsedTasks);
+    localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+
+    dialog.close();
+    
+    triggerViewChange(() => {
+      renderCalendar();
+      updateAgendaList();
+    });
+  });
+}
+
+function convert12hTo24h(time12) {
+  const cleaned = time12.trim().toUpperCase();
+  const parts = cleaned.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/);
+  if (!parts) return null;
+  let h = parseInt(parts[1], 10);
+  const m = parts[2];
+  const ampm = parts[3];
+  
+  if (ampm === "PM" && h < 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  
+  return `${String(h).padStart(2, '0')}:${m}`;
+}
+
+function parseNotepadText(text, dateStr) {
+  const lines = text.split("\n");
+  const parsedTasks = [];
+  const regex = /^(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))\s*-\s*(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm))\s*(?:\[([^\]]+)\])?\s*([^|]+)(?:\s*\|\s*(.*))?$/i;
+
+  for (let idx = 0; idx < lines.length; idx++) {
+    const line = lines[idx].trim();
+    if (!line) continue;
+
+    const match = line.match(regex);
+    if (!match) {
+      console.warn(`Line failed to parse: ${line}`);
+      return null;
+    }
+
+    const startTime12 = match[1];
+    const endTime12 = match[2];
+    const rawCat = match[3] ? match[3].trim().toLowerCase() : "other";
+    const title = match[4].trim();
+    const description = match[5] ? match[5].trim() : "";
+
+    const startTime24 = convert12hTo24h(startTime12);
+    const endTime24 = convert12hTo24h(endTime12);
+
+    if (!startTime24 || !endTime24) {
+      console.warn(`Invalid time format in line: ${line}`);
+      return null;
+    }
+
+    const startMin = getMinutes(startTime24);
+    let endMin = getMinutes(endTime24);
+    if (endMin <= startMin && endTime12.toUpperCase().includes("AM") && (endTime12.startsWith("12:") || endTime12.startsWith("00:"))) {
+      endMin = 24 * 60; // 12:00 AM next day
+    }
+    const duration = endMin - startMin;
+
+    if (duration <= 0) {
+      console.warn(`Duration must be positive in line: ${line}`);
+      return null;
+    }
+
+    let category = "other";
+    if (rawCat === "work") category = "work";
+    else if (rawCat === "break" || rawCat === "health") category = "health";
+    else if (rawCat === "chore" || rawCat === "personal") category = "personal";
+
+    parsedTasks.push({
+      id: `task-bulk-${Date.now()}-${idx}`,
+      title: title,
+      date: dateStr,
+      startTime: startTime24,
+      duration: duration,
+      category: category,
+      description: description,
+      completed: true
+    });
+  }
+
+  return parsedTasks;
+}
+
 
 
 

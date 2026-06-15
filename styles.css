@@ -3353,3 +3353,172 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
+
+/* Journal Live Time Indicator styles */
+.journal-cell.journal-cell-live {
+  position: relative;
+  outline: 2px solid #ef4444 !important;
+  outline-offset: -1px;
+  z-index: 5;
+  animation: livePulse 2s infinite ease-in-out;
+}
+
+.journal-live-dot {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  background-color: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #ef4444;
+  pointer-events: none;
+  z-index: 6;
+  animation: dotPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes livePulse {
+  0%, 100% { outline-color: rgba(239, 68, 68, 0.4); }
+  50% { outline-color: rgba(239, 68, 68, 1); }
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.7; }
+}
+
+/* Ruled Dark Notepad paper layout */
+.notepad-paper {
+  background-color: #0f1016;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 2.4rem;
+  line-height: 2.4rem;
+  padding: 1.5rem 1.5rem 1.5rem 3.5rem;
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid var(--border-card);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+  min-height: 500px;
+  font-family: 'Outfit', sans-serif;
+  margin-top: 1rem;
+}
+
+.notepad-paper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 2.5rem;
+  bottom: 0;
+  width: 2px;
+  background-color: rgba(239, 68, 68, 0.35); /* red margin line */
+}
+
+.notepad-line {
+  display: flex;
+  align-items: center;
+  min-height: 2.4rem;
+  padding: 0 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.notepad-line:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.notepad-line.active {
+  background-color: rgba(239, 68, 68, 0.08);
+  border-left: 3px solid #ef4444;
+  padding-left: calc(0.5rem - 3px);
+}
+
+.notepad-time-indicator {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  animation: activeLivePulse 1.5s infinite alternate;
+}
+
+@keyframes activeLivePulse {
+  from { box-shadow: 0 0 2px rgba(239, 68, 68, 0.3); }
+  to { box-shadow: 0 0 10px rgba(239, 68, 68, 0.8); }
+}
+
+.notepad-line-time {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  width: 165px;
+  flex-shrink: 0;
+}
+
+.notepad-line-cat {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 12px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  line-height: 1.25;
+}
+
+.notepad-line-cat.cat-work {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.notepad-line-cat.cat-break {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.notepad-line-cat.cat-chore {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.notepad-line-cat.cat-other {
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+.notepad-line-content {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+}
+
+.notepad-line-note {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+.notepad-actions-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
