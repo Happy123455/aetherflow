@@ -2105,15 +2105,6 @@
       "xp": 25,
       "stress": -15,
       "value": 0
-    },
-    {
-      "id": "task-1781517816957",
-      "title": "h",
-      "date": "2026-06-15",
-      "startTime": "15:15",
-      "duration": 195,
-      "category": "work",
-      "completed": true
     }
   ],
   "userStats": {
@@ -2226,5 +2217,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781517816957
+  "syncTime": 1781517829306
 }
