@@ -1601,9 +1601,9 @@
       "colLeft": 0
     },
     {
-      "id": "0it2jnzmqf13cdh",
-      "title": "2301CV514 – Theory of Architecture (Lec)",
-      "description": "📍 Room: G-304 | 👨‍🏫 Faculty: SGG",
+      "id": "e4hu9bcmqf17m1w",
+      "title": "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)",
+      "description": "📍 Room: G-304 / G-203 | 👨‍🏫 Faculty: SGG / DAJ",
       "date": "2026-06-15",
       "startTime": "07:45",
       "duration": 55,
@@ -1614,9 +1614,9 @@
       "value": 0
     },
     {
-      "id": "s6jlk7pmqf13cdh",
-      "title": "2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
+      "id": "v9toxf0mqf17m1w",
+      "title": "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)",
+      "description": "📍 Room: G-304 / G-203 | 👨‍🏫 Faculty: SGG / DAJ",
       "date": "2026-06-15",
       "startTime": "08:40",
       "duration": 55,
@@ -1627,7 +1627,7 @@
       "value": 0
     },
     {
-      "id": "5y1ot2omqf13cdh",
+      "id": "17v97rnmqf17m1w",
       "title": "☕ Break",
       "description": "Routine Block: ☕ Break",
       "date": "2026-06-15",
@@ -1640,7 +1640,7 @@
       "value": 0
     },
     {
-      "id": "atyx7pemqf13cdh",
+      "id": "cwvcobjmqf17m1w",
       "title": "2301CV502 – Engg Hydrology (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: MAJ",
       "date": "2026-06-15",
@@ -1653,7 +1653,7 @@
       "value": 0
     },
     {
-      "id": "wsht49hmqf13cdh",
+      "id": "2mf32bpmqf17m1w",
       "title": "2301CV503 – Transportation Engg (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
       "date": "2026-06-15",
@@ -1666,7 +1666,7 @@
       "value": 0
     },
     {
-      "id": "g5v8i07mqf13cdh",
+      "id": "5g83wybmqf17m1w",
       "title": "🍽️ Lunch Break",
       "description": "Routine Block: 🍽️ Lunch Break",
       "date": "2026-06-15",
@@ -1679,20 +1679,20 @@
       "value": 0
     },
     {
-      "id": "940uxabmqf13cdh",
+      "id": "uozicikmqf17m1w",
       "title": "2301CV501 – ESD Lab (B2)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DDH",
       "date": "2026-06-15",
-      "startTime": "13:00",
-      "duration": 50,
+      "startTime": "12:10",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "isgl1nsmqf13cdh",
+      "id": "5ncvrrrmqf17m1w",
       "title": "2301CV503 – Transportation Engg (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
       "date": "2026-06-16",
@@ -1705,7 +1705,7 @@
       "value": 0
     },
     {
-      "id": "mr5q9g3mqf13cdh",
+      "id": "ccsjt48mqf17m1w",
       "title": "2301CV502 – Engg Hydrology (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: MAJ",
       "date": "2026-06-16",
@@ -1718,7 +1718,7 @@
       "value": 0
     },
     {
-      "id": "iqem3uemqf13cdh",
+      "id": "zec1anzmqf17m1w",
       "title": "☕ Break",
       "description": "Routine Block: ☕ Break",
       "date": "2026-06-16",
@@ -1731,20 +1731,20 @@
       "value": 0
     },
     {
-      "id": "uf5p8g5mqf13cdh",
+      "id": "m54fs5fmqf17m1w",
       "title": "2301ME591 – CADD Lab (B2)",
       "description": "📍 Room: CC G-204 | 👨‍🏫 Faculty: DKP",
       "date": "2026-06-16",
-      "startTime": "10:40",
-      "duration": 50,
+      "startTime": "09:50",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "i5mc968mqf13cdh",
+      "id": "q609e19mqf17m1w",
       "title": "🍽️ Lunch Break",
       "description": "Routine Block: 🍽️ Lunch Break",
       "date": "2026-06-16",
@@ -1757,21 +1757,21 @@
       "value": 0
     },
     {
-      "id": "bqr3m6smqf13cdh",
+      "id": "18m925vmqf17m1w",
       "title": "2301CV502 – Engg Hydrology Lab (B2)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: MAJ",
       "date": "2026-06-16",
-      "startTime": "13:00",
-      "duration": 50,
+      "startTime": "12:10",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "icws4tsmqf13cdh",
-      "title": "2301CV501 – Elem. Structural Design (Lec)",
+      "id": "dn7z7temqf17m1w",
+      "title": "2301CV501 – ESD (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DDH",
       "date": "2026-06-17",
       "startTime": "07:45",
@@ -1783,8 +1783,8 @@
       "value": 0
     },
     {
-      "id": "jg7plclmqf13cdh",
-      "title": "2301CV501 – Elem. Structural Design (Lec)",
+      "id": "dd47nnkmqf17m1w",
+      "title": "2301CV501 – ESD (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DDH",
       "date": "2026-06-17",
       "startTime": "08:40",
@@ -1796,7 +1796,7 @@
       "value": 0
     },
     {
-      "id": "zh0o9afmqf13cdh",
+      "id": "v2sjy1ymqf17m1w",
       "title": "☕ Break",
       "description": "Routine Block: ☕ Break",
       "date": "2026-06-17",
@@ -1809,33 +1809,20 @@
       "value": 0
     },
     {
-      "id": "r5fcvc0mqf13cdh",
-      "title": "2301CV514 – ToA Lab",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: SGG",
+      "id": "1r4aaormqf17m1w",
+      "title": "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel Lab (B2)",
+      "description": "📍 Room: G-203 / C-104 | 👨‍🏫 Faculty: SGG / DAJ",
       "date": "2026-06-17",
       "startTime": "09:50",
-      "duration": 50,
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "qzl0e6amqf13cdh",
-      "title": "2301CV513 – Bridge & Tunnel Engg Lab",
-      "description": "📍 Room: C-104 | 👨‍🏫 Faculty: DAJ",
-      "date": "2026-06-17",
-      "startTime": "10:40",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 30,
-      "stress": 15,
-      "value": 0
-    },
-    {
-      "id": "c1sqiz5mqf13cdh",
+      "id": "ju4g4limqf17m1w",
       "title": "🍽️ Lunch Break",
       "description": "Routine Block: 🍽️ Lunch Break",
       "date": "2026-06-17",
@@ -1848,21 +1835,34 @@
       "value": 0
     },
     {
-      "id": "seyu5rimqf13cdh",
+      "id": "9u1nvlimqf17m1w",
+      "title": "2301CV503 – Transportation Engg (Lec)",
+      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
+      "date": "2026-06-17",
+      "startTime": "12:10",
+      "duration": 50,
+      "category": "work",
+      "completed": false,
+      "xp": 20,
+      "stress": 10,
+      "value": 0
+    },
+    {
+      "id": "486cpmnmqf17m1w",
       "title": "🏅 SPORTS",
       "description": "Routine Block: 🏅 SPORTS",
       "date": "2026-06-17",
-      "startTime": "12:10",
-      "duration": 100,
+      "startTime": "13:00",
+      "duration": 50,
       "category": "fitness",
       "completed": false,
-      "xp": 25,
+      "xp": 20,
       "stress": -15,
       "value": 0
     },
     {
-      "id": "ytu2gtfmqf13cdh",
-      "title": "2301CV501 – Elem. Structural Design (Lec)",
+      "id": "jw5edi8mqf17m1w",
+      "title": "2301CV501 – ESD (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DKJ",
       "date": "2026-06-18",
       "startTime": "07:45",
@@ -1874,8 +1874,8 @@
       "value": 0
     },
     {
-      "id": "afvk79pmqf13cdh",
-      "title": "2301CV501 – Elem. Structural Design (Lec)",
+      "id": "cn1mk6nmqf17m1w",
+      "title": "2301CV501 – ESD (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DKJ",
       "date": "2026-06-18",
       "startTime": "08:40",
@@ -1887,7 +1887,7 @@
       "value": 0
     },
     {
-      "id": "uh6suy5mqf13cdh",
+      "id": "zpepr63mqf17m1w",
       "title": "☕ Break",
       "description": "Routine Block: ☕ Break",
       "date": "2026-06-18",
@@ -1900,20 +1900,20 @@
       "value": 0
     },
     {
-      "id": "7nbvryhmqf13cdh",
-      "title": "2301CV501 – ESD Lab (B2)",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DDH",
+      "id": "1dh48zimqf17m1w",
+      "title": "2301CV503 – TE Lab (B2)",
+      "description": "📍 Room: Lab C-104 | 👨‍🏫 Faculty: DAJ",
       "date": "2026-06-18",
-      "startTime": "10:40",
-      "duration": 50,
+      "startTime": "09:50",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "9rpmmyvmqf13cdh",
+      "id": "vl07f25mqf17m1w",
       "title": "🍽️ Lunch Break",
       "description": "Routine Block: 🍽️ Lunch Break",
       "date": "2026-06-18",
@@ -1926,20 +1926,20 @@
       "value": 0
     },
     {
-      "id": "cu1qf8emqf13cdh",
+      "id": "kgfyn00mqf17m1w",
       "title": "2301ME591 – CADD Lab (B2)",
       "description": "📍 Room: CC G-204 | 👨‍🏫 Faculty: DKP",
       "date": "2026-06-18",
-      "startTime": "13:00",
-      "duration": 50,
+      "startTime": "12:10",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "u1owaesmqf13cdh",
+      "id": "iz9jeplmqf17m1w",
       "title": "2301CV502 – Engg Hydrology (Lec)",
       "description": "📍 Room: G-203 | 👨‍🏫 Faculty: MAJ",
       "date": "2026-06-19",
@@ -1952,9 +1952,9 @@
       "value": 0
     },
     {
-      "id": "vdku7s7mqf13cdh",
-      "title": "2301CV513 – Bridge & Tunnel Engg (Lec)",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
+      "id": "bqdkx9wmqf17m1w",
+      "title": "2301CV513 – Bridge & Tunnel / 2301CV514 – ToA (Lec)",
+      "description": "📍 Room: G-203 / G-304 | 👨‍🏫 Faculty: DAJ / SGG",
       "date": "2026-06-19",
       "startTime": "08:40",
       "duration": 55,
@@ -1965,7 +1965,7 @@
       "value": 0
     },
     {
-      "id": "30x6nkomqf13cdh",
+      "id": "7xpgbehmqf17m1w",
       "title": "☕ Break",
       "description": "Routine Block: ☕ Break",
       "date": "2026-06-19",
@@ -1978,20 +1978,20 @@
       "value": 0
     },
     {
-      "id": "1dwkn49mqf13cdh",
-      "title": "2301CV503 – TE Lab (B2)",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
+      "id": "l2z4s1pmqf17m1w",
+      "title": "2301CV501 – ESD Lab (B2)",
+      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DDH",
       "date": "2026-06-19",
-      "startTime": "10:40",
-      "duration": 50,
+      "startTime": "09:50",
+      "duration": 100,
       "category": "work",
       "completed": false,
-      "xp": 30,
+      "xp": 35,
       "stress": 15,
       "value": 0
     },
     {
-      "id": "93mlo9vmqf13cdh",
+      "id": "1qm41jjmqf17m1w",
       "title": "🍽️ Lunch Break",
       "description": "Routine Block: 🍽️ Lunch Break",
       "date": "2026-06-19",
@@ -2004,25 +2004,12 @@
       "value": 0
     },
     {
-      "id": "07gyv04mqf13cdh",
-      "title": "2301CV503 – Transportation Engg (Lec)",
-      "description": "📍 Room: G-203 | 👨‍🏫 Faculty: DAJ",
-      "date": "2026-06-19",
-      "startTime": "12:10",
-      "duration": 50,
-      "category": "work",
-      "completed": false,
-      "xp": 20,
-      "stress": 10,
-      "value": 0
-    },
-    {
-      "id": "ic1rgmimqf13cdh",
+      "id": "qfjm7y9mqf17m1w",
       "title": "🏅 SPORTS",
       "description": "Routine Block: 🏅 SPORTS",
       "date": "2026-06-19",
-      "startTime": "13:00",
-      "duration": 50,
+      "startTime": "12:10",
+      "duration": 100,
       "category": "fitness",
       "completed": false,
       "xp": 25,
@@ -2140,5 +2127,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781516779111
+  "syncTime": 1781516978277
 }
