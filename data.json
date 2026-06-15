@@ -2109,12 +2109,15 @@
     {
       "id": "task-1781518176227",
       "title": "return from the collage",
+      "description": "",
       "date": "2026-06-15",
       "startTime": "14:30",
-      "duration": 5,
-      "category": "work",
-      "description": "",
-      "completed": true
+      "duration": null,
+      "category": "health",
+      "completed": true,
+      "xp": 30,
+      "stress": 10,
+      "value": 0
     }
   ],
   "userStats": {
@@ -2227,5 +2230,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781518176227
+  "syncTime": 1781518225375
 }
