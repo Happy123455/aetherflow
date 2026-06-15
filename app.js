@@ -3587,8 +3587,8 @@ function setupCollegeNotifToggle() {
 ---------------------------------------------------- */
 const collegeTimetable = {
   monday: [
-    { time: "07:45", duration: 55, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304 / G-203", faculty: "SGG / DAJ" },
-    { time: "08:40", duration: 55, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304 / G-203", faculty: "SGG / DAJ" },
+    { time: "07:45", duration: 55, title: "2301CV514 – Theory of Architecture (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304", faculty: "SGG" },
+    { time: "08:40", duration: 55, title: "2301CV514 – Theory of Architecture (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304", faculty: "SGG" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
     { time: "09:50", duration: 50, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
     { time: "10:40", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
@@ -3607,7 +3607,7 @@ const collegeTimetable = {
     { time: "07:45", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
     { time: "08:40", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DDH" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
-    { time: "09:50", duration: 100, title: "2301CV514 – ToA / 2301CV513 – Bridge & Tunnel Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203 / C-104", faculty: "SGG / DAJ" },
+    { time: "09:50", duration: 100, title: "2301CV514 – Theory of Architecture Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "SGG" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
     { time: "12:10", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
     { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "fitness", xp: 20, stress: -15, value: 0 }
@@ -3622,7 +3622,7 @@ const collegeTimetable = {
   ],
   friday: [
     { time: "07:45", duration: 55, title: "2301CV502 – Engg Hydrology (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "MAJ" },
-    { time: "08:40", duration: 55, title: "2301CV513 – Bridge & Tunnel / 2301CV514 – ToA (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203 / G-304", faculty: "DAJ / SGG" },
+    { time: "08:40", duration: 55, title: "2301CV514 – Theory of Architecture (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-304", faculty: "SGG" },
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
     { time: "09:50", duration: 100, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "DDH" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
