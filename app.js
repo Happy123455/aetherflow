@@ -840,10 +840,15 @@ const state = {
 };
 
 // Order for switching zoom directions
-const VIEW_ORDER = ["day", "week", "month", "year", "simulation"];
+const VIEW_ORDER = ["day", "week", "month", "year", "simulation", "journal"];
 
 let activeAssignRoutine = null;
 let isSyncingInProgress = false;
+let journalSelection = {
+  isSelecting: false,
+  startIndex: null,
+  endIndex: null
+};
 
 // Safely parse JSON from local storage with fallback
 function safeJSONParse(str, fallback) {
@@ -944,6 +949,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupMobileSidebar();
   setupSyncDialogListeners();
   setupCollegeNotifToggle();
+  setupJournalDialogListeners();
 
   // Setup Zoom Slider Listener
   const zoomSlider = document.getElementById("zoom-slider");
@@ -1214,6 +1220,8 @@ function renderCalendar() {
     renderYearView(container);
   } else if (state.currentView === "simulation") {
     renderSimulationView(container);
+  } else if (state.currentView === "journal") {
+    renderJournalView(container);
   }
 
   // Adjust zoom container visibility
@@ -1255,6 +1263,8 @@ function updateRangeLabel() {
 
   if (state.currentView === "day") {
     label.innerText = d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  } else if (state.currentView === "journal") {
+    label.innerText = "Journal: " + d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
   } else if (state.currentView === "week") {
     const monday = getStartOfWeek(d);
     const sunday = new Date(monday);
@@ -6183,6 +6193,376 @@ function openApplyRoutineCalendarDialog(routine) {
     const overwrite = overwriteCheckbox.checked;
     applyRoutineStepsToDate(routine.steps, dateStr, overwrite ? "overwrite" : "append");
     closeDialog();
+  });
+}
+
+/* ----------------------------------------------------
+   View Implementation: JOURNAL (5-Minute Grid Timeboxing)
+   ---------------------------------------------------- */
+function slotToTime24(slotIndex) {
+  const h = Math.floor(slotIndex / 12);
+  const m = (slotIndex % 12) * 5;
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+function slotToTime12h(slotIndex) {
+  const h = Math.floor(slotIndex / 12);
+  const m = (slotIndex % 12) * 5;
+  if (h === 24) return "12:00 AM";
+  const suffix = h >= 12 ? "PM" : "AM";
+  const displayHour = h % 12 === 0 ? 12 : h % 12;
+  return `${displayHour}:${String(m).padStart(2, '0')} ${suffix}`;
+}
+
+function openJournalAssignDialog(minSlot, maxSlot) {
+  const dialog = document.getElementById("journal-assign-dialog");
+  if (!dialog) return;
+
+  const startStr = slotToTime24(minSlot);
+  const endStr = slotToTime24(maxSlot + 1);
+  const duration = (maxSlot - minSlot + 1) * 5;
+
+  const activeDateStr = getFormattedDateStr(state.currentDate);
+  state.tempJournalSelection = {
+    date: activeDateStr,
+    startTime: startStr,
+    duration: duration
+  };
+
+  const rangeText = document.getElementById("journal-time-range-text");
+  if (rangeText) {
+    rangeText.innerText = `${slotToTime12h(minSlot)} — ${slotToTime12h(maxSlot + 1)} (${duration} min)`;
+  }
+
+  const titleInput = document.getElementById("journal-task-title");
+  if (titleInput) {
+    titleInput.value = "";
+  }
+
+  // Check default radio button
+  const defaultRadio = dialog.querySelector('input[name="journal-category"][value="work"]');
+  if (defaultRadio) defaultRadio.checked = true;
+
+  dialog.showModal();
+  soundEffects.play("click");
+}
+
+function renderJournalView(parent) {
+  const root = document.createElement("div");
+  root.className = "journal-view-container";
+
+  const activeDateStr = getFormattedDateStr(state.currentDate);
+
+  // 1. Header
+  const header = document.createElement("div");
+  header.className = "journal-header";
+
+  const title = document.createElement("h3");
+  title.className = "journal-header-title";
+  title.innerHTML = `<i data-lucide="clock" style="color:var(--primary);width:22px;height:22px;vertical-align:middle;"></i> Timebox Journal`;
+
+  const actions = document.createElement("div");
+  actions.className = "journal-header-actions";
+
+  // Clear Day button
+  const clearBtn = document.createElement("button");
+  clearBtn.className = "btn btn-danger";
+  clearBtn.innerHTML = `<i data-lucide="trash-2" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i> Clear Day`;
+  clearBtn.addEventListener("click", () => {
+    soundEffects.play("click");
+    showAppConfirm("Are you sure you want to delete all tasks for this day?", (confirmed) => {
+      if (!confirmed) return;
+      state.tasks = state.tasks.filter(t => t.date !== activeDateStr);
+      localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+      triggerViewChange(() => {
+        renderCalendar();
+        updateAgendaList();
+      });
+    });
+  });
+
+  actions.appendChild(clearBtn);
+  header.appendChild(title);
+  header.appendChild(actions);
+  root.appendChild(header);
+
+  // 2. Grid Wrapper
+  const gridWrap = document.createElement("div");
+  gridWrap.className = "journal-grid-wrapper";
+
+  // Column Headers (Hour + :00, :05, :10, ..., :55)
+  const colHeaders = document.createElement("div");
+  colHeaders.className = "journal-column-headers";
+  colHeaders.innerHTML = `<div class="journal-hour-header-label">Hour</div>`;
+  for (let m = 0; m < 60; m += 5) {
+    const colLabel = document.createElement("div");
+    colLabel.innerText = `:${String(m).padStart(2, '0')}`;
+    colHeaders.appendChild(colLabel);
+  }
+  gridWrap.appendChild(colHeaders);
+
+  // 3. Grid Cells Processing
+  const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+  const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
+
+  // Map tasks to 288 slots
+  const cellTasks = new Array(288).fill(null);
+  filteredTasks.forEach(task => {
+    if (!task.startTime) return;
+    const parts = task.startTime.split(":");
+    const hours = parseInt(parts[0], 10);
+    const minutes = parseInt(parts[1], 10);
+    
+    const startSlot = (hours * 12) + Math.floor(minutes / 5);
+    const durationSlots = Math.ceil((task.duration || 30) / 5);
+    
+    for (let i = 0; i < durationSlots; i++) {
+      const idx = startSlot + i;
+      if (idx < 288) {
+        cellTasks[idx] = {
+          task: task,
+          isStart: i === 0,
+          isEnd: i === durationSlots - 1,
+          isMiddle: i > 0 && i < durationSlots - 1,
+          slotOffset: i,
+          totalSlots: durationSlots
+        };
+      }
+    }
+  });
+
+  // 4. Render 24 rows
+  for (let h = 0; h < 24; h++) {
+    const row = document.createElement("div");
+    row.className = "journal-row";
+
+    // Hour label (e.g. 09:00 AM)
+    const hourLabel = document.createElement("div");
+    hourLabel.className = "journal-hour-label";
+    hourLabel.innerText = formatHourLabel(h);
+    row.appendChild(hourLabel);
+
+    // 12 cells for 5-minute slots
+    for (let m = 0; m < 12; m++) {
+      const cellIdx = (h * 12) + m;
+      const cell = document.createElement("div");
+      cell.className = "journal-cell";
+      cell.setAttribute("data-index", cellIdx);
+
+      const cellData = cellTasks[cellIdx];
+      if (cellData) {
+        // Cell is occupied by a task
+        cell.classList.add("occupied");
+        
+        // Add category class
+        const cat = cellData.task.category || "other";
+        let catClass = "type-other";
+        if (cat === "work") catClass = "type-work";
+        else if (cat === "health") catClass = "type-break";
+        else if (cat === "personal") catClass = "type-chore";
+        cell.classList.add(catClass);
+
+        // Add continuity classes
+        if (cellData.totalSlots === 1) {
+          cell.classList.add("occupied-single");
+        } else if (cellData.isStart) {
+          cell.classList.add("occupied-start");
+        } else if (cellData.isEnd) {
+          cell.classList.add("occupied-end");
+        } else {
+          cell.classList.add("occupied-middle");
+        }
+
+        // Render title inside first cell
+        if (cellData.isStart) {
+          const labelSpan = document.createElement("span");
+          labelSpan.className = "journal-cell-label";
+          labelSpan.innerText = cellData.task.title;
+          cell.appendChild(labelSpan);
+        }
+
+        cell.title = `${cellData.task.title} (${cellData.task.startTime}, ${cellData.task.duration} min)`;
+
+        // Clicking occupied cell opens standard edit/delete modal
+        cell.addEventListener("click", () => {
+          soundEffects.play("click");
+          openTaskDialog(cellData.task.id);
+        });
+
+      } else {
+        // Cell is empty - attach drag-select and touch-swipe handlers
+        
+        // Mouse Down (Start Selection)
+        cell.addEventListener("mousedown", (e) => {
+          if (e.button !== 0) return; // Only left click
+          soundEffects.play("click");
+          journalSelection.isSelecting = true;
+          journalSelection.startIndex = cellIdx;
+          journalSelection.endIndex = cellIdx;
+          updateSelectionHighlight();
+        });
+
+        // Mouse Enter (Update Selection)
+        cell.addEventListener("mouseenter", () => {
+          if (journalSelection.isSelecting) {
+            journalSelection.endIndex = cellIdx;
+            updateSelectionHighlight();
+          }
+        });
+      }
+
+      row.appendChild(cell);
+    }
+    gridWrap.appendChild(row);
+  }
+
+  root.appendChild(gridWrap);
+  parent.appendChild(root);
+
+  // Selection visual feedback update
+  function updateSelectionHighlight() {
+    const cells = root.querySelectorAll(".journal-cell");
+    const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+    const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+
+    cells.forEach(c => {
+      const idx = parseInt(c.getAttribute("data-index"), 10);
+      if (idx >= min && idx <= max && !c.classList.contains("occupied")) {
+        c.classList.add("selected");
+      } else {
+        c.classList.remove("selected");
+      }
+    });
+  }
+
+  // Global mouseup release listener
+  const handleMouseUp = () => {
+    if (journalSelection.isSelecting) {
+      journalSelection.isSelecting = false;
+      const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+      const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+      openJournalAssignDialog(min, max);
+    }
+  };
+
+  // Touch Swipe Handlers for Mobile Devices
+  root.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cell = elem ? elem.closest('.journal-cell') : null;
+    if (cell && !cell.classList.contains("occupied")) {
+      const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
+      soundEffects.play("click");
+      journalSelection.isSelecting = true;
+      journalSelection.startIndex = cellIdx;
+      journalSelection.endIndex = cellIdx;
+      updateSelectionHighlight();
+      e.preventDefault(); // Prevent scrolling while swiping
+    }
+  }, { passive: false });
+
+  root.addEventListener("touchmove", (e) => {
+    if (!journalSelection.isSelecting) return;
+    const touch = e.touches[0];
+    const elem = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cell = elem ? elem.closest('.journal-cell') : null;
+    if (cell && !cell.classList.contains("occupied")) {
+      const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
+      journalSelection.endIndex = cellIdx;
+      updateSelectionHighlight();
+    }
+    e.preventDefault(); // Prevent scrolling while swiping
+  }, { passive: false });
+
+  root.addEventListener("touchend", () => {
+    if (journalSelection.isSelecting) {
+      journalSelection.isSelecting = false;
+      const min = Math.min(journalSelection.startIndex, journalSelection.endIndex);
+      const max = Math.max(journalSelection.startIndex, journalSelection.endIndex);
+      openJournalAssignDialog(min, max);
+    }
+  });
+
+  // Attach and cleanup global pointerup listener
+  window.addEventListener("mouseup", handleMouseUp);
+  
+  // Clean up when leaving view
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(m => {
+      m.removedNodes.forEach(n => {
+        if (n === root) {
+          window.removeEventListener("mouseup", handleMouseUp);
+          observer.disconnect();
+        }
+      });
+    });
+  });
+  if (parent) {
+    observer.observe(parent, { childList: true });
+  }
+
+  lucide.createIcons();
+}
+
+function setupJournalDialogListeners() {
+  const dialog = document.getElementById("journal-assign-dialog");
+  if (!dialog) return;
+
+  const form = document.getElementById("journal-assign-form");
+  const cancelBtn = document.getElementById("btn-journal-cancel");
+  const closeBtn = document.getElementById("btn-close-journal-dialog");
+
+  const clearSelectionStyles = () => {
+    document.querySelectorAll(".journal-cell.selected").forEach(c => {
+      c.classList.remove("selected");
+    });
+  };
+
+  closeBtn.addEventListener("click", () => {
+    clearSelectionStyles();
+    dialog.close();
+  });
+
+  cancelBtn.addEventListener("click", () => {
+    clearSelectionStyles();
+    dialog.close();
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    soundEffects.play("coin");
+
+    const titleInput = document.getElementById("journal-task-title");
+    const categoryInput = form.querySelector('input[name="journal-category"]:checked');
+
+    if (!titleInput || !categoryInput || !state.tempJournalSelection) {
+      dialog.close();
+      clearSelectionStyles();
+      return;
+    }
+
+    const newTask = {
+      id: `task-${Date.now()}`,
+      title: titleInput.value.trim(),
+      date: state.tempJournalSelection.date,
+      startTime: state.tempJournalSelection.startTime,
+      duration: state.tempJournalSelection.duration,
+      category: categoryInput.value,
+      completed: true
+    };
+
+    state.tasks.push(newTask);
+    localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+
+    // Close and reset
+    dialog.close();
+    clearSelectionStyles();
+
+    // Re-render and auto-sync
+    triggerViewChange(() => {
+      renderCalendar();
+      updateAgendaList();
+    });
   });
 }
 

@@ -3145,3 +3145,211 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
     gap: 16px;
   }
 }
+
+/* ----------------------------------------------------
+   5-Minute Time Grid Journaling View
+   ---------------------------------------------------- */
+.journal-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 1.5rem;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.journal-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+.journal-header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Journal Grid Layout */
+.journal-grid-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  user-select: none; /* Prevent text highlight during drag selection */
+}
+
+/* Grid Column Headers (00, 05, 10... 55) */
+.journal-column-headers {
+  display: grid;
+  grid-template-columns: 90px repeat(12, 1fr);
+  gap: 6px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-card);
+}
+
+.journal-hour-header-label {
+  text-align: left;
+  padding-left: 8px;
+}
+
+/* Row structure */
+.journal-row {
+  display: grid;
+  grid-template-columns: 90px repeat(12, 1fr);
+  gap: 6px;
+  align-items: center;
+}
+
+.journal-hour-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding-left: 8px;
+  white-space: nowrap;
+}
+
+/* 5-minute cells */
+.journal-cell {
+  height: 48px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  cursor: crosshair;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.journal-cell:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Dragging visual selection */
+.journal-cell.selected {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: var(--color-work) !important;
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.25) inset;
+}
+
+/* Occupied Task block cells */
+.journal-cell.occupied {
+  cursor: pointer;
+  color: white;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Occupied borders/rounding for continuous rendering */
+.journal-cell.occupied.occupied-start {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-left-width: 1px;
+}
+.journal-cell.occupied.occupied-middle {
+  border-radius: 0;
+  border-left-width: 0;
+  border-right-width: 0;
+}
+.journal-cell.occupied.occupied-end {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  border-right-width: 1px;
+}
+.journal-cell.occupied.occupied-single {
+  border-radius: 8px;
+  border-width: 1px;
+}
+
+.journal-cell.occupied:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient Category classes (First Principles) */
+.journal-cell.occupied.type-work {
+  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
+.journal-cell.occupied.type-break {
+  background: linear-gradient(135deg, #10b981 0%, #065f46 100%) !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+}
+
+.journal-cell.occupied.type-chore {
+  background: linear-gradient(135deg, #f59e0b 0%, #92400e 100%) !important;
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+}
+
+.journal-cell.occupied.type-other {
+  background: linear-gradient(135deg, #6366f1 0%, #3730a3 100%) !important;
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+}
+
+/* Text label styles in grid cell */
+.journal-cell-label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 8px;
+  box-sizing: border-box;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Category Dialog Segmented Button highlights */
+.journal-category-selector label.j-cat-btn:hover {
+  background: rgba(255,255,255,0.02) !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+.journal-category-selector input[type="radio"]:checked + span {
+  text-decoration: underline;
+}
+
+.journal-category-selector label:has(input[type="radio"]:checked) {
+  border-width: 2px !important;
+  background: rgba(255,255,255,0.05) !important;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
