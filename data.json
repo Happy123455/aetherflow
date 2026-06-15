@@ -2112,7 +2112,7 @@
       "description": "",
       "date": "2026-06-15",
       "startTime": "14:30",
-      "duration": null,
+      "duration": 15,
       "category": "health",
       "completed": true,
       "xp": 30,
@@ -2230,5 +2230,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781518225375
+  "syncTime": 1781518239791
 }
