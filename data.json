@@ -2105,6 +2105,16 @@
       "xp": 25,
       "stress": -15,
       "value": 0
+    },
+    {
+      "id": "task-1781518176227",
+      "title": "return from the collage",
+      "date": "2026-06-15",
+      "startTime": "14:30",
+      "duration": 5,
+      "category": "work",
+      "description": "",
+      "completed": true
     }
   ],
   "userStats": {
@@ -2217,5 +2227,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781517862857
+  "syncTime": 1781518176227
 }
