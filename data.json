@@ -2212,10 +2212,10 @@
   "collapsedGroups": {
     "group-academic": true,
     "group-breaks": true,
-    "group-wellness": false,
+    "group-wellness": true,
     "group-gaming": true,
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781517829306
+  "syncTime": 1781517862857
 }
