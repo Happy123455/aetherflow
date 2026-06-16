@@ -2149,6 +2149,17 @@
       "colIndex": 1,
       "colWidth": 50,
       "colLeft": 50
+    },
+    {
+      "id": "task-comment-1781606989312",
+      "title": "hi how are you this is after update",
+      "date": "2026-06-16",
+      "startTime": "16:15",
+      "duration": 5,
+      "category": "health",
+      "description": "",
+      "completed": true,
+      "isComment": true
     }
   ],
   "userStats": {
@@ -2261,5 +2272,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781606312750
+  "syncTime": 1781606989313
 }
