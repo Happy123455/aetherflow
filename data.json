@@ -1640,7 +1640,7 @@
       "startTime": "09:35",
       "duration": 15,
       "category": "personal",
-      "completed": false,
+      "completed": true,
       "xp": 0,
       "stress": -5,
       "value": 0,
@@ -2126,7 +2126,7 @@
   "userStats": {
     "xp": 747,
     "level": 1,
-    "stress": 85,
+    "stress": 80,
     "value": 50
   },
   "customTemplates": [
@@ -2233,5 +2233,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781590809266
+  "syncTime": 1781590966889
 }
