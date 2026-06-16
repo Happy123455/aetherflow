@@ -952,6 +952,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCollegeNotifToggle();
   setupJournalDialogListeners();
   setupJournalTextEditDialogListeners();
+  setupJournalNoteExpandDialogListeners();
   setupLoadTimetableListener();
 
   // Setup Zoom Slider Listener
@@ -1948,6 +1949,12 @@ function createTaskCard(task) {
   if (task.completed) {
     card.classList.add("completed");
   }
+  if (task.isComment) {
+    card.classList.add("comment-card");
+  }
+  if (task.isLocked) {
+    card.classList.add("locked-exercise-card");
+  }
   
   // Placement settings based on layoutTask calculations
   const startMin = getMinutes(task.startTime);
@@ -1968,7 +1975,13 @@ function createTaskCard(task) {
   // Content
   const title = document.createElement("div");
   title.className = "task-card-title";
-  title.innerText = task.title;
+  if (task.isLocked) {
+    title.innerHTML = `<i data-lucide="lock" style="width:10px;height:10px;margin-right:4px;display:inline-block;vertical-align:middle;"></i> ${task.title}`;
+  } else if (task.isComment) {
+    title.innerHTML = `<i data-lucide="message-square" style="width:10px;height:10px;margin-right:4px;display:inline-block;vertical-align:middle;"></i> ${task.title}`;
+  } else {
+    title.innerText = task.title;
+  }
   
   const time = document.createElement("div");
   time.className = "task-card-time";
@@ -1979,17 +1992,19 @@ function createTaskCard(task) {
     card.appendChild(time);
   }
   
-  // Checkbox button for reward claiming
-  const claimBtn = document.createElement("div");
-  claimBtn.className = "btn-claim";
-  claimBtn.innerHTML = `<i data-lucide="check" style="width:12px;height:12px;"></i>`;
-  claimBtn.title = task.completed ? "Undo Completed" : "Claim Rewards / Complete";
-  
-  claimBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    claimRewards(task, card);
-  });
-  card.appendChild(claimBtn);
+  // Checkbox button for reward claiming - disabled/hidden for Comment Blocks
+  if (!task.isComment) {
+    const claimBtn = document.createElement("div");
+    claimBtn.className = "btn-claim";
+    claimBtn.innerHTML = `<i data-lucide="check" style="width:12px;height:12px;"></i>`;
+    claimBtn.title = task.completed ? "Undo Completed" : "Claim Rewards / Complete";
+    
+    claimBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      claimRewards(task, card);
+    });
+    card.appendChild(claimBtn);
+  }
   
   // Hover details tooltip event bindings
   card.addEventListener("mouseenter", (e) => {
@@ -2002,6 +2017,14 @@ function createTaskCard(task) {
   
   card.addEventListener("click", (e) => {
     e.stopPropagation(); // prevent columns add clicks
+    if (task.isLocked) {
+      showAppAlert("🌿 Daily Exercise has been condensed and locked before sleep! Complete your exercise to prepare for bed.");
+      return;
+    }
+    if (task.isComment && state.currentView !== "journal") {
+      showAppAlert("💬 This is a Journal Comment block and can only be edited or deleted from the Journal section.");
+      return;
+    }
     openTaskDialog(task.id);
   });
   
@@ -2174,7 +2197,8 @@ function setupTaskFormListeners() {
       completed: existingIndex > -1 ? state.tasks[existingIndex].completed : false,
       xp: existingIndex > -1 ? (state.tasks[existingIndex].xp || 30) : 30,
       stress: existingIndex > -1 ? (state.tasks[existingIndex].stress || 10) : 10,
-      value: existingIndex > -1 ? (state.tasks[existingIndex].value || 0) : 0
+      value: existingIndex > -1 ? (state.tasks[existingIndex].value || 0) : 0,
+      isComment: existingIndex > -1 ? (state.tasks[existingIndex].isComment || false) : false
     };
     
     if (existingIndex > -1) {
@@ -2197,6 +2221,18 @@ function setupTaskFormListeners() {
 }
 
 function openTaskDialog(taskId = null, defaultDateStr = null, defaultTimeStr = null, templateId = null) {
+  if (taskId) {
+    const task = state.tasks.find(t => t.id === taskId);
+    if (task && task.isLocked) {
+      showAppAlert("🌿 Daily Exercise has been condensed and locked before sleep! Complete your exercise to prepare for bed.");
+      return;
+    }
+    if (task && task.isComment && state.currentView !== "journal") {
+      showAppAlert("💬 This is a Journal Comment block and can only be edited or deleted from the Journal section.");
+      return;
+    }
+  }
+
   taskForm.reset();
   
   const dialogTitle = document.getElementById("dialog-title");
@@ -3356,18 +3392,30 @@ function showCalendarTooltip(task, event) {
   let valueText = "";
   if (valueVal > 0) valueText = `+$${valueVal}`;
   else if (valueVal < 0) valueText = `-$${Math.abs(valueVal)}`;
-  
-  tooltip.innerHTML = `
-    <div class="tooltip-title">${task.title}</div>
-    <div class="tooltip-time">
-      <i data-lucide="clock" style="width:12px;height:12px;color:var(--text-muted);display:inline-block;vertical-align:middle;"></i>
-      <span>${formatTime12h(task.startTime)} (${task.duration} min)</span>
-    </div>
+
+  let titleHTML = `<div class="tooltip-title">${task.title}</div>`;
+  if (task.isComment) {
+    titleHTML = `<div class="tooltip-title" style="display:flex;align-items:center;gap:6px;"><i data-lucide="message-square" style="width:14px;height:14px;color:#f87171;"></i> ${task.title} <span style="font-size:0.65rem;background:rgba(239, 68, 68, 0.2);color:#f87171;padding:2px 6px;border-radius:4px;font-weight:700;">Comment</span></div>`;
+  }
+
+  let metricsHTML = `
     <div class="tooltip-metrics">
       <span class="metric-pill xp">+${task.xp !== undefined ? task.xp : 30} XP</span>
       <span class="metric-pill stress ${stressClass}">${stressText}</span>
       ${valueVal !== 0 ? `<span class="metric-pill value ${valueClass}">${valueText}</span>` : ""}
     </div>
+  `;
+  if (task.isComment) {
+    metricsHTML = `<div style="font-size:0.75rem;color:var(--text-muted);margin:6px 0 8px 0;font-style:italic;display:flex;align-items:center;gap:4px;"><i data-lucide="edit-3" style="width:12px;height:12px;"></i> Editable only in Journal view</div>`;
+  }
+  
+  tooltip.innerHTML = `
+    ${titleHTML}
+    <div class="tooltip-time">
+      <i data-lucide="clock" style="width:12px;height:12px;color:var(--text-muted);display:inline-block;vertical-align:middle;"></i>
+      <span>${formatTime12h(task.startTime)} (${task.duration} min)</span>
+    </div>
+    ${metricsHTML}
     ${descHTML}
   `;
   
@@ -6254,17 +6302,17 @@ function openApplyRoutineCalendarDialog(routine) {
 }
 
 /* ----------------------------------------------------
-   View Implementation: JOURNAL (5-Minute Grid Timeboxing)
+   View Implementation: JOURNAL (2-Minute Grid Timeboxing)
    ---------------------------------------------------- */
 function slotToTime24(slotIndex) {
-  const h = Math.floor(slotIndex / 12);
-  const m = (slotIndex % 12) * 5;
+  const h = Math.floor(slotIndex / 30);
+  const m = (slotIndex % 30) * 2;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 }
 
 function slotToTime12h(slotIndex) {
-  const h = Math.floor(slotIndex / 12);
-  const m = (slotIndex % 12) * 5;
+  const h = Math.floor(slotIndex / 30);
+  const m = (slotIndex % 30) * 2;
   if (h === 24) return "12:00 AM";
   const suffix = h >= 12 ? "PM" : "AM";
   const displayHour = h % 12 === 0 ? 12 : h % 12;
@@ -6277,7 +6325,7 @@ function openJournalAssignDialog(minSlot, maxSlot) {
 
   const startStr = slotToTime24(minSlot);
   const endStr = slotToTime24(maxSlot + 1);
-  const duration = (maxSlot - minSlot + 1) * 5;
+  const duration = (maxSlot - minSlot + 1) * 2;
 
   const activeDateStr = getFormattedDateStr(state.currentDate);
   state.tempJournalSelection = {
@@ -6307,6 +6355,15 @@ function openJournalAssignDialog(minSlot, maxSlot) {
 
   dialog.showModal();
   soundEffects.play("click");
+}
+
+function getRoutinePhaseEmoji(h) {
+  if (h >= 7 && h < 8) return "🌅 Morning Prep";
+  if (h >= 8 && h < 9) return "🚌 Transit";
+  if (h >= 9 && h < 14) return "🎓 Lectures";
+  if (h >= 14 && h < 15) return "🏡 Transit Home";
+  if (h >= 15 && h < 21) return "🤸 Free Time";
+  return "🌙 Sleep Prep";
 }
 
 function renderJournalView(parent) {
@@ -6409,13 +6466,18 @@ function renderJournalView(parent) {
     const gridWrap = document.createElement("div");
     gridWrap.className = "journal-grid-wrapper";
 
-    // Column Headers (Hour + :00, :05, :10, ..., :55)
+    // Column Headers (Hour + :00, :10, :20, ..., :50)
     const colHeaders = document.createElement("div");
     colHeaders.className = "journal-column-headers";
     colHeaders.innerHTML = `<div class="journal-hour-header-label">Hour</div>`;
-    for (let m = 0; m < 60; m += 5) {
+    for (let m = 0; m < 30; m++) {
       const colLabel = document.createElement("div");
-      colLabel.innerText = `:${String(m).padStart(2, '0')}`;
+      const minutesVal = m * 2;
+      if (minutesVal % 10 === 0) {
+        colLabel.innerText = `:${String(minutesVal).padStart(2, '0')}`;
+      } else {
+        colLabel.innerText = "";
+      }
       colHeaders.appendChild(colLabel);
     }
     gridWrap.appendChild(colHeaders);
@@ -6424,20 +6486,20 @@ function renderJournalView(parent) {
     const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
     const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
 
-    // Map tasks to 288 slots
-    const cellTasks = new Array(288).fill(null);
+    // Map tasks to 720 slots (2-minute intervals)
+    const cellTasks = new Array(720).fill(null);
     filteredTasks.forEach(task => {
       if (!task.startTime) return;
       const parts = task.startTime.split(":");
       const hours = parseInt(parts[0], 10);
       const minutes = parseInt(parts[1], 10);
       
-      const startSlot = (hours * 12) + Math.floor(minutes / 5);
-      const durationSlots = Math.ceil((task.duration || 30) / 5);
+      const startSlot = (hours * 30) + Math.floor(minutes / 2);
+      const durationSlots = Math.ceil((task.duration || 30) / 2);
       
       for (let i = 0; i < durationSlots; i++) {
         const idx = startSlot + i;
-        if (idx < 288) {
+        if (idx < 720) {
           cellTasks[idx] = {
             task: task,
             isStart: i === 0,
@@ -6455,15 +6517,15 @@ function renderJournalView(parent) {
       const row = document.createElement("div");
       row.className = "journal-row";
 
-      // Hour label (e.g. 09:00 AM)
+      // Hour label with routine guide
       const hourLabel = document.createElement("div");
       hourLabel.className = "journal-hour-label";
-      hourLabel.innerText = formatHourLabel(h);
+      hourLabel.innerHTML = `${formatHourLabel(h)} <span style="font-size:0.55rem;display:block;color:var(--text-muted);font-weight:normal;line-height:1.2;">${getRoutinePhaseEmoji(h)}</span>`;
       row.appendChild(hourLabel);
 
-      // 12 cells for 5-minute slots
-      for (let m = 0; m < 12; m++) {
-        const cellIdx = (h * 12) + m;
+      // 30 cells for 2-minute slots
+      for (let m = 0; m < 30; m++) {
+        const cellIdx = (h * 30) + m;
         const cell = document.createElement("div");
         cell.className = "journal-cell";
         cell.setAttribute("data-index", cellIdx);
@@ -6618,6 +6680,141 @@ function renderJournalView(parent) {
     updateLiveTimeIndicator();
   }, 50);
 
+  // --- Exercise Water Bubble & Pre-bedtime Condensation Lock ---
+  const todayStr = getFormattedDateStr(new Date());
+  const hasExercise = state.tasks.some(t => t.date === activeDateStr && (t.title.includes("Exercise") || t.title.includes("exercise")));
+
+  if (activeDateStr === todayStr) {
+    const now = new Date();
+    const totalMinutesNow = now.getHours() * 60 + now.getMinutes();
+    const thresholdMinutes = 19 * 60 + 30; // 19:30
+
+    if (totalMinutesNow >= thresholdMinutes) {
+      if (!hasExercise) {
+        const lockedTask = {
+          id: "locked-exercise-" + activeDateStr,
+          title: "🌿 Daily Exercise [REQUIRED]",
+          date: activeDateStr,
+          startTime: "20:30",
+          duration: 30,
+          category: "health",
+          description: "Pre-bedtime exercise routine. Condensed and locked.",
+          completed: false,
+          isLocked: true,
+          xp: 25,
+          stress: -15
+        };
+        state.tasks.push(lockedTask);
+        localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+        
+        showAppAlert("🌿 Daily Exercise has been condensed and locked before sleep! Complete your exercise to prepare for bed.");
+        
+        setTimeout(() => {
+          renderCalendar();
+        }, 0);
+      }
+    } else {
+      if (!hasExercise) {
+        // Render Floating Exercise Bubble
+        const existingBubble = document.querySelector(".exercise-bubble-container");
+        if (!existingBubble) {
+          const bubble = document.createElement("div");
+          bubble.className = "exercise-bubble-container";
+          bubble.innerHTML = `
+            <i data-lucide="droplet" style="width:28px;height:28px;color:white;"></i>
+            <div class="exercise-bubble-text">Daily<br>Exercise</div>
+          `;
+          
+          // Function to find free slots
+          const findSuggestedExerciseSlots = () => {
+            const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
+            const cellTasks = new Array(720).fill(null);
+            dayTasks.forEach(task => {
+              if (!task.startTime) return;
+              const parts = task.startTime.split(":");
+              const hours = parseInt(parts[0], 10);
+              const minutes = parseInt(parts[1], 10);
+              const startSlot = (hours * 30) + Math.floor(minutes / 2);
+              const durationSlots = Math.ceil((task.duration || 30) / 2);
+              for (let i = 0; i < durationSlots; i++) {
+                if (startSlot + i < 720) cellTasks[startSlot + i] = true;
+              }
+            });
+
+            const suggestions = [];
+            // Scan for 15 consecutive free slots (30 mins) from 08:00 (slot 240) to 20:00 (slot 600)
+            for (let slot = 240; slot <= 600; slot += 15) {
+              let free = true;
+              for (let i = 0; i < 15; i++) {
+                if (cellTasks[slot + i]) {
+                  free = false;
+                  break;
+                }
+              }
+              if (free) {
+                suggestions.push(slot);
+              }
+            }
+            return suggestions;
+          };
+
+          bubble.addEventListener("mouseenter", () => {
+            const suggestions = findSuggestedExerciseSlots();
+            if (suggestions.length > 0) {
+              const bestSlot = suggestions[0];
+              for (let i = 0; i < 15; i++) {
+                const cell = root.querySelector(`.journal-cell[data-index="${bestSlot + i}"]`);
+                if (cell) {
+                  cell.classList.add("suggested-exercise-highlight");
+                }
+              }
+            }
+          });
+
+          bubble.addEventListener("mouseleave", () => {
+            root.querySelectorAll(".suggested-exercise-highlight").forEach(el => {
+              el.classList.remove("suggested-exercise-highlight");
+            });
+          });
+
+          bubble.addEventListener("click", () => {
+            soundEffects.play("click");
+            const suggestions = findSuggestedExerciseSlots();
+            if (suggestions.length > 0) {
+              const bestSlot = suggestions[0];
+              const startHour = Math.floor(bestSlot / 30);
+              const startMin = (bestSlot % 30) * 2;
+              const timeStr = `${String(startHour).padStart(2, '0')}:${String(startMin).padStart(2, '0')}`;
+              
+              const newExercise = {
+                id: "exercise-" + Date.now(),
+                title: "🌿 Daily Exercise",
+                date: activeDateStr,
+                startTime: timeStr,
+                duration: 30,
+                category: "health",
+                description: "Daily exercise routine to stay fit.",
+                completed: false,
+                xp: 25,
+                stress: -15
+              };
+              state.tasks.push(newExercise);
+              localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+              
+              showAppAlert(`🌿 Daily Exercise scheduled at ${formatTime12h(timeStr)}!`);
+              bubble.remove();
+              renderCalendar();
+            } else {
+              showAppAlert("No free 30-minute slot found for exercise today! Please clear some space.");
+            }
+          });
+
+          document.body.appendChild(bubble);
+        }
+      }
+    }
+  }
+
   // Clean up when leaving view
   const observer = new MutationObserver((mutations) => {
     mutations.forEach(m => {
@@ -6625,6 +6822,10 @@ function renderJournalView(parent) {
         if (n === root) {
           if (handleMouseUp) {
             window.removeEventListener("mouseup", handleMouseUp);
+          }
+          const bubble = document.querySelector(".exercise-bubble-container");
+          if (bubble) {
+            bubble.remove();
           }
           observer.disconnect();
         }
@@ -6757,64 +6958,249 @@ function escapeHTML(str) {
   );
 }
 
+function minuteToTime12h(minutes) {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  const suffix = h >= 12 ? "PM" : "AM";
+  const displayHour = h % 12 === 0 ? 12 : h % 12;
+  return `${displayHour}:${String(m).padStart(2, '0')} ${suffix}`;
+}
+
 function renderNotepadView(container, activeDateStr) {
   container.innerHTML = "";
-
+  
+  // Create a scroll wrapper to contain the 204 lines
+  const scrollContainer = document.createElement("div");
+  scrollContainer.style.height = "550px";
+  scrollContainer.style.overflowY = "auto";
+  scrollContainer.style.paddingRight = "10px";
+  
   const dayTasks = state.tasks.filter(t => t.date === activeDateStr);
-  const filteredTasks = dayTasks.filter(t => state.filters[t.category || "other"]);
-
-  // Sort by start time
-  filteredTasks.sort((a, b) => getMinutes(a.startTime) - getMinutes(b.startTime));
-
-  if (filteredTasks.length === 0) {
-    const emptyLine = document.createElement("div");
-    emptyLine.className = "notepad-line";
-    emptyLine.innerHTML = `<span style="color: var(--text-muted); font-style: italic; font-size: 0.9rem;">No entries recorded for today. Click "Bulk Edit" or click "Grid View" to add time blocks.</span>`;
-    container.appendChild(emptyLine);
-    return;
-  }
-
-  filteredTasks.forEach(task => {
+  
+  // Render every 5 minutes from 07:00 AM (420 min) to 11:55 PM (1435 min)
+  for (let startMin = 420; startMin <= 1435; startMin += 5) {
+    const endMin = startMin + 5;
+    const timeStr = `${minuteToTime12h(startMin)} - ${minuteToTime12h(endMin)}`;
+    const h = Math.floor(startMin / 60);
+    const phase = getRoutinePhaseEmoji(h);
+    
+    // Find if a task covers this 5-minute interval
+    const coveringTask = dayTasks.find(t => {
+      const tStart = getMinutes(t.startTime);
+      const tEnd = tStart + (t.duration || 30);
+      return startMin >= tStart && startMin < tEnd;
+    });
+    
     const line = document.createElement("div");
     line.className = "notepad-line";
-    
-    // Compute start and end minutes for active highlighting
-    const startMin = getMinutes(task.startTime);
-    const endMin = startMin + (task.duration || 30);
     line.setAttribute("data-start-min", startMin);
     line.setAttribute("data-end-min", endMin);
-
-    // Format times nicely in 12h format
-    const start12 = formatTime12h(task.startTime);
-    const end24 = slotToTime24(Math.min(288, (startMin + (task.duration || 30)) / 5));
-    const end12 = formatTime12h(end24);
-
-    // Categories styling
-    const cat = task.category || "other";
-    const catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
-    let catClass = `cat-${cat}`;
-    if (cat === "health") catClass = "cat-break";
-    if (cat === "personal") catClass = "cat-chore";
-
-    let noteText = "";
-    if (task.description) {
-      noteText = `<span class="notepad-line-note">| ${escapeHTML(task.description)}</span>`;
+    
+    // Active time indicator checking
+    const now = new Date();
+    const todayStr = getFormattedDateStr(now);
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    if (activeDateStr === todayStr && nowMinutes >= startMin && nowMinutes < endMin) {
+      line.classList.add("active");
     }
-
-    line.innerHTML = `
-      <span class="notepad-line-time">${start12} - ${end12}</span>
-      <span class="notepad-line-cat ${catClass}">${catLabel}</span>
-      <span class="notepad-line-content">${escapeHTML(task.title)} ${noteText}</span>
-    `;
-
-    // Click to open edit dialog
-    line.addEventListener("click", () => {
-      soundEffects.play("click");
-      openTaskDialog(task.id);
-    });
-
-    container.appendChild(line);
-  });
+    
+    // Time label on the left
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "notepad-line-time";
+    timeSpan.style.width = "150px";
+    timeSpan.innerText = timeStr;
+    line.appendChild(timeSpan);
+    
+    // Routine Phase label
+    const phaseSpan = document.createElement("span");
+    phaseSpan.style.fontSize = "0.65rem";
+    phaseSpan.style.color = "var(--text-muted)";
+    phaseSpan.style.width = "120px";
+    phaseSpan.style.marginRight = "15px";
+    phaseSpan.style.flexShrink = "0";
+    phaseSpan.innerText = phase;
+    line.appendChild(phaseSpan);
+    
+    // Content element
+    const contentDiv = document.createElement("div");
+    contentDiv.style.flexGrow = "1";
+    contentDiv.style.display = "flex";
+    contentDiv.style.alignItems = "center";
+    
+    if (coveringTask) {
+      const tStart = getMinutes(coveringTask.startTime);
+      if (startMin === tStart) {
+        // Start of a task/comment block
+        if (coveringTask.isComment) {
+          // Comment Block - editable inline input
+          const input = document.createElement("input");
+          input.type = "text";
+          input.className = "notepad-inline-input";
+          input.value = coveringTask.title;
+          input.placeholder = "Write a comment...";
+          input.style.border = "none";
+          input.style.background = "transparent";
+          input.style.color = "white";
+          input.style.width = "100%";
+          input.style.outline = "none";
+          input.style.fontSize = "0.85rem";
+          
+          // Detect long note typing
+          input.addEventListener("input", (e) => {
+            if (e.target.value.length > 35) {
+              // Open expand dialog
+              openJournalNoteExpandDialog(`task-${coveringTask.id}`, e.target.value);
+            }
+          });
+          
+          // Blur/Submit edits
+          input.addEventListener("blur", (e) => {
+            const newVal = e.target.value.trim();
+            if (newVal === "") {
+              // Delete comment block
+              state.tasks = state.tasks.filter(t => t.id !== coveringTask.id);
+              localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+              triggerViewChange(() => {
+                renderCalendar();
+                updateAgendaList();
+              });
+            } else if (newVal !== coveringTask.title) {
+              // Update title
+              coveringTask.title = newVal;
+              localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+              triggerViewChange(() => {
+                renderCalendar();
+                updateAgendaList();
+              });
+            }
+          });
+          
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+              input.blur();
+            }
+          });
+          
+          contentDiv.appendChild(input);
+          
+          // Add comment category badge
+          const cat = coveringTask.category || "other";
+          let catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+          if (cat === "health") catLabel = "Break";
+          if (cat === "personal") catLabel = "Chore";
+          
+          const catBadge = document.createElement("span");
+          catBadge.className = `notepad-line-cat cat-${cat}`;
+          catBadge.style.fontSize = "0.6rem";
+          catBadge.style.padding = "1px 6px";
+          catBadge.style.marginLeft = "10px";
+          catBadge.innerText = catLabel;
+          contentDiv.appendChild(catBadge);
+        } else {
+          // Normal Task - read-only in notepad view, click opens standard task dialog
+          const taskSpan = document.createElement("span");
+          taskSpan.style.cursor = "pointer";
+          taskSpan.style.fontSize = "0.85rem";
+          
+          const cat = coveringTask.category || "other";
+          let catLabel = cat.charAt(0).toUpperCase() + cat.slice(1);
+          if (cat === "health") catLabel = "Break";
+          if (cat === "personal") catLabel = "Chore";
+          
+          taskSpan.innerHTML = `<span style="color:var(--text-muted);font-weight:600;margin-right:8px;">[${catLabel}]</span> ${escapeHTML(coveringTask.title)}`;
+          taskSpan.addEventListener("click", () => {
+            soundEffects.play("click");
+            openTaskDialog(coveringTask.id);
+          });
+          contentDiv.appendChild(taskSpan);
+        }
+      } else {
+        // Continuation line of a task/comment block
+        const contSpan = document.createElement("span");
+        contSpan.style.color = "rgba(255, 255, 255, 0.15)";
+        contSpan.style.fontSize = "0.8rem";
+        contSpan.style.fontStyle = "italic";
+        contSpan.innerText = `↳ (continued: ${coveringTask.title})`;
+        contentDiv.appendChild(contSpan);
+      }
+    } else {
+      // Empty slot - show empty inline input
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = "notepad-inline-input empty-input";
+      input.placeholder = "...";
+      input.style.border = "none";
+      input.style.background = "transparent";
+      input.style.color = "rgba(255, 255, 255, 0.35)";
+      input.style.width = "100%";
+      input.style.outline = "none";
+      input.style.fontSize = "0.85rem";
+      
+      // Detect long note typing
+      input.addEventListener("input", (e) => {
+        if (e.target.value.length > 35) {
+          openJournalNoteExpandDialog(`slot-${startMin}`, e.target.value);
+        }
+      });
+      
+      // Save comment on blur
+      input.addEventListener("blur", (e) => {
+        const val = e.target.value.trim();
+        if (val !== "") {
+          const startTime24 = slotToTime24(startMin / 2);
+          
+          // Categorize based on routine phase
+          let category = "other";
+          if (startMin >= 420 && startMin < 510) category = "personal"; // Morning Prep
+          else if (startMin >= 510 && startMin < 540) category = "other"; // Transit
+          else if (startMin >= 540 && startMin < 840) category = "work"; // Lectures
+          else if (startMin >= 840 && startMin < 885) category = "other"; // Transit Home
+          else if (startMin >= 885 && startMin < 1260) category = "health"; // Free Time
+          
+          const newComment = {
+            id: `task-comment-${Date.now()}`,
+            title: val,
+            date: activeDateStr,
+            startTime: startTime24,
+            duration: 5,
+            category: category,
+            description: "",
+            completed: true,
+            isComment: true
+          };
+          
+          state.tasks.push(newComment);
+          localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+          soundEffects.play("coin");
+          triggerViewChange(() => {
+            renderCalendar();
+            updateAgendaList();
+          });
+        }
+      });
+      
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          input.blur();
+        }
+      });
+      
+      contentDiv.appendChild(input);
+    }
+    
+    line.appendChild(contentDiv);
+    scrollContainer.appendChild(line);
+  }
+  
+  container.appendChild(scrollContainer);
+  
+  // Highlight active time row in notepad list
+  setTimeout(() => {
+    const activeLine = scrollContainer.querySelector(".notepad-line.active");
+    if (activeLine) {
+      activeLine.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  }, 100);
 }
 
 function openJournalTextEditDialog() {
@@ -6999,6 +7385,104 @@ function parseNotepadText(text, dateStr) {
   }
 
   return parsedTasks;
+}
+
+function setupJournalNoteExpandDialogListeners() {
+  const dialog = document.getElementById("journal-note-expand-dialog");
+  if (!dialog) return;
+
+  const form = document.getElementById("journal-note-expand-form");
+  const cancelBtn = document.getElementById("btn-journal-note-expand-cancel");
+  const closeBtn = document.getElementById("btn-close-journal-note-expand");
+  const textarea = document.getElementById("journal-note-expand-area");
+  const slotInput = document.getElementById("journal-note-expand-slot");
+
+  const closeDialog = () => {
+    dialog.close();
+    // Render notepad view again to reset input values
+    const notepadWrap = document.querySelector(".notepad-paper");
+    if (notepadWrap) {
+      const activeDateStr = getFormattedDateStr(state.currentDate);
+      renderNotepadView(notepadWrap, activeDateStr);
+    }
+  };
+
+  closeBtn.addEventListener("click", closeDialog);
+  cancelBtn.addEventListener("click", closeDialog);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    soundEffects.play("coin");
+
+    const text = textarea.value.trim();
+    const target = slotInput.value;
+    const activeDateStr = getFormattedDateStr(state.currentDate);
+
+    if (text !== "") {
+      if (target.startsWith("task-")) {
+        // Update existing task/comment
+        const taskId = target.replace("task-", "");
+        const task = state.tasks.find(t => t.id === taskId);
+        if (task) {
+          task.title = text;
+          localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+        }
+      } else if (target.startsWith("slot-")) {
+        // Create new comment block
+        const startMin = parseInt(target.replace("slot-", ""), 10);
+        const startTime24 = slotToTime24(startMin / 2);
+        
+        let category = "other";
+        if (startMin >= 420 && startMin < 510) category = "personal";
+        else if (startMin >= 510 && startMin < 540) category = "other";
+        else if (startMin >= 540 && startMin < 840) category = "work";
+        else if (startMin >= 840 && startMin < 885) category = "other";
+        else if (startMin >= 885 && startMin < 1260) category = "health";
+        
+        const newComment = {
+          id: `task-comment-${Date.now()}`,
+          title: text,
+          date: activeDateStr,
+          startTime: startTime24,
+          duration: 5,
+          category: category,
+          description: "",
+          completed: true,
+          isComment: true
+        };
+        
+        state.tasks.push(newComment);
+        localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+      }
+      
+      triggerViewChange(() => {
+        renderCalendar();
+        updateAgendaList();
+      });
+    }
+
+    dialog.close();
+  });
+}
+
+function openJournalNoteExpandDialog(targetId, initialValue) {
+  const dialog = document.getElementById("journal-note-expand-dialog");
+  const textarea = document.getElementById("journal-note-expand-area");
+  const slotInput = document.getElementById("journal-note-expand-slot");
+  const label = document.getElementById("journal-note-expand-label");
+  if (!dialog || !textarea || !slotInput) return;
+
+  slotInput.value = targetId;
+  textarea.value = initialValue;
+  
+  if (targetId.startsWith("slot-")) {
+    const startMin = parseInt(targetId.replace("slot-", ""), 10);
+    label.innerText = `Writing comment for slot: ${minuteToTime12h(startMin)}`;
+  } else {
+    label.innerText = `Edit Comment Details`;
+  }
+
+  dialog.showModal();
 }
 
 

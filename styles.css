@@ -3194,12 +3194,13 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   flex-direction: column;
   gap: 8px;
   user-select: none; /* Prevent text highlight during drag selection */
+  overflow-x: auto;
 }
 
-/* Grid Column Headers (00, 05, 10... 55) */
+/* Grid Column Headers (00, 10, 20... 50) */
 .journal-column-headers {
   display: grid;
-  grid-template-columns: 90px repeat(12, 1fr);
+  grid-template-columns: 90px repeat(30, 1fr);
   gap: 6px;
   text-align: center;
   font-size: 0.75rem;
@@ -3207,6 +3208,7 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   color: var(--text-muted);
   padding-bottom: 8px;
   border-bottom: 1px solid var(--border-card);
+  min-width: 1050px;
 }
 
 .journal-hour-header-label {
@@ -3217,9 +3219,10 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 /* Row structure */
 .journal-row {
   display: grid;
-  grid-template-columns: 90px repeat(12, 1fr);
+  grid-template-columns: 90px repeat(30, 1fr);
   gap: 6px;
   align-items: center;
+  min-width: 1050px;
 }
 
 .journal-hour-label {
@@ -3359,8 +3362,9 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   position: relative;
   outline: 2px solid #ef4444 !important;
   outline-offset: -1px;
+  box-shadow: 0 0 12px #ef4444, inset 0 0 8px rgba(239, 68, 68, 0.6) !important;
   z-index: 5;
-  animation: livePulse 2s infinite ease-in-out;
+  animation: liveBlinkingGlow 1.2s infinite ease-in-out;
 }
 
 .journal-live-dot {
@@ -3377,14 +3381,90 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   animation: dotPulse 1.5s infinite ease-in-out;
 }
 
-@keyframes livePulse {
-  0%, 100% { outline-color: rgba(239, 68, 68, 0.4); }
-  50% { outline-color: rgba(239, 68, 68, 1); }
+@keyframes liveBlinkingGlow {
+  0%, 100% {
+    outline-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.3), inset 0 0 4px rgba(239, 68, 68, 0.2) !important;
+  }
+  50% {
+    outline-color: rgba(239, 68, 68, 1);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.9), inset 0 0 10px rgba(239, 68, 68, 0.6) !important;
+  }
 }
 
 @keyframes dotPulse {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.4); opacity: 0.7; }
+}
+
+/* Comment block events styling */
+.task-card-event.comment-card {
+  border: 1.5px dashed rgba(255, 255, 255, 0.45) !important;
+  opacity: 0.9;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.05);
+}
+
+.task-card-event.comment-card.completed {
+  text-decoration: none !important;
+  opacity: 0.95;
+}
+
+/* Floating Exercise Water Bubble Physics */
+.exercise-bubble-container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.4) 0%, rgba(4, 120, 87, 0.8) 70%, rgba(6, 95, 70, 0.9) 100%);
+  box-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.4), inset -5px -5px 15px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 100;
+  animation: bubbleWobble 4s infinite ease-in-out;
+  transition: all 0.3s ease;
+  text-align: center;
+  padding: 8px;
+}
+
+.exercise-bubble-container:hover {
+  transform: scale(1.1) translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.6);
+}
+
+.exercise-bubble-text {
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  pointer-events: none;
+  margin-top: 4px;
+}
+
+@keyframes bubbleWobble {
+  0%, 100% {
+    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    border-radius: 48% 52% 46% 54% / 47% 53% 47% 53%;
+    transform: translateY(-6px) rotate(2deg);
+  }
+  50% {
+    border-radius: 52% 48% 54% 46% / 53% 47% 53% 47%;
+    transform: translateY(-2px) rotate(-2deg);
+  }
+  75% {
+    border-radius: 46% 54% 52% 48% / 49% 51% 48% 52%;
+    transform: translateY(-8px) rotate(1deg);
+  }
 }
 
 /* Ruled Dark Notepad paper layout */
@@ -3520,5 +3600,18 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   margin-bottom: 1rem;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* Suggested Exercise Highlight */
+.journal-cell.suggested-exercise-highlight {
+  border: 1.5px dashed var(--success) !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Locked Exercise Card Pulsing Glow */
+.task-card-event.locked-exercise-card {
+  outline: 2px solid #ef4444 !important;
+  box-shadow: 0 0 12px #ef4444, inset 0 0 8px rgba(239, 68, 68, 0.6) !important;
+  animation: liveBlinkingGlow 1.2s infinite ease-in-out;
 }
 
