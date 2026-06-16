@@ -1725,7 +1725,7 @@
       "stress": 10,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1741,7 +1741,7 @@
       "stress": 10,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1757,7 +1757,7 @@
       "stress": -5,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1773,7 +1773,7 @@
       "stress": 15,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1789,7 +1789,7 @@
       "stress": -10,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -1800,12 +1800,12 @@
       "startTime": "12:10",
       "duration": 100,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 35,
       "stress": 15,
       "value": 0,
       "colIndex": 0,
-      "colWidth": 100,
+      "colWidth": 50,
       "colLeft": 0
     },
     {
@@ -2131,7 +2131,10 @@
       "category": "health",
       "description": "",
       "completed": true,
-      "isComment": true
+      "isComment": true,
+      "colIndex": 0,
+      "colWidth": 50,
+      "colLeft": 0
     },
     {
       "id": "task-comment-1781604726157",
@@ -2142,13 +2145,16 @@
       "category": "health",
       "description": "",
       "completed": true,
-      "isComment": true
+      "isComment": true,
+      "colIndex": 1,
+      "colWidth": 50,
+      "colLeft": 50
     }
   ],
   "userStats": {
-    "xp": 747,
+    "xp": 782,
     "level": 1,
-    "stress": 80,
+    "stress": 95,
     "value": 50
   },
   "customTemplates": [
@@ -2255,5 +2261,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781604726157
+  "syncTime": 1781604985039
 }
