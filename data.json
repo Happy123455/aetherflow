@@ -1752,7 +1752,7 @@
       "startTime": "09:35",
       "duration": 15,
       "category": "personal",
-      "completed": false,
+      "completed": true,
       "xp": 0,
       "stress": -5,
       "value": 0,
@@ -1768,7 +1768,7 @@
       "startTime": "09:50",
       "duration": 100,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 35,
       "stress": 15,
       "value": 0,
@@ -1784,7 +1784,7 @@
       "startTime": "11:30",
       "duration": 40,
       "category": "personal",
-      "completed": false,
+      "completed": true,
       "xp": 0,
       "stress": -10,
       "value": 0,
@@ -2124,9 +2124,9 @@
     }
   ],
   "userStats": {
-    "xp": 712,
+    "xp": 747,
     "level": 1,
-    "stress": 100,
+    "stress": 85,
     "value": 50
   },
   "customTemplates": [
@@ -2233,5 +2233,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781590797281
+  "syncTime": 1781590809266
 }
