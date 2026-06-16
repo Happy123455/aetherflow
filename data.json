@@ -2121,6 +2121,17 @@
       "colIndex": 0,
       "colWidth": 100,
       "colLeft": 0
+    },
+    {
+      "id": "task-comment-1781604706988",
+      "title": "hi how are you this is first time i",
+      "date": "2026-06-16",
+      "startTime": "15:40",
+      "duration": 5,
+      "category": "health",
+      "description": "",
+      "completed": true,
+      "isComment": true
     }
   ],
   "userStats": {
@@ -2233,5 +2244,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781590966889
+  "syncTime": 1781604706989
 }
