@@ -27,6 +27,16 @@
   --color-personal-bg: rgba(236, 72, 153, 0.15);
   --color-health-bg: rgba(16, 185, 129, 0.15);
   --color-other-bg: rgba(245, 158, 11, 0.15);
+
+  --gradient-work: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+  --gradient-break: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+  --gradient-chore: linear-gradient(135deg, #f59e0b 0%, #92400e 100%);
+  --gradient-other: linear-gradient(135deg, #6366f1 0%, #3730a3 100%);
+
+  --border-work: #f87171;
+  --border-break: #34d399;
+  --border-chore: #fbbf24;
+  --border-other: #818cf8;
   
   /* Indicators */
   --time-line: #ef4444;
@@ -3301,27 +3311,27 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
 
 /* Gradient Category classes (First Principles) */
 .journal-cell.occupied.type-work {
-  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important;
-  border-color: #f87171 !important;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+  background: var(--gradient-work) !important;
+  border-color: var(--border-work) !important;
+  box-shadow: 0 0 12px var(--shadow-work, rgba(239, 68, 68, 0.2));
 }
 
 .journal-cell.occupied.type-break {
-  background: linear-gradient(135deg, #10b981 0%, #065f46 100%) !important;
-  border-color: #34d399 !important;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  background: var(--gradient-break) !important;
+  border-color: var(--border-break) !important;
+  box-shadow: 0 0 12px var(--shadow-break, rgba(16, 185, 129, 0.2));
 }
 
 .journal-cell.occupied.type-chore {
-  background: linear-gradient(135deg, #f59e0b 0%, #92400e 100%) !important;
-  border-color: #fbbf24 !important;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+  background: var(--gradient-chore) !important;
+  border-color: var(--border-chore) !important;
+  box-shadow: 0 0 12px var(--shadow-chore, rgba(245, 158, 11, 0.2));
 }
 
 .journal-cell.occupied.type-other {
-  background: linear-gradient(135deg, #6366f1 0%, #3730a3 100%) !important;
-  border-color: #818cf8 !important;
-  box-shadow: 0 0 12px rgba(99, 102, 241, 0.2);
+  background: var(--gradient-other) !important;
+  border-color: var(--border-other) !important;
+  box-shadow: 0 0 12px var(--shadow-other, rgba(99, 102, 241, 0.2));
 }
 
 /* Text label styles in grid cell */
@@ -3613,5 +3623,38 @@ html:active-view-transition-type(zoom-out)::view-transition-new(calendar-grid) {
   outline: 2px solid #ef4444 !important;
   box-shadow: 0 0 12px #ef4444, inset 0 0 8px rgba(239, 68, 68, 0.6) !important;
   animation: liveBlinkingGlow 1.2s infinite ease-in-out;
+}
+
+/* Journal Theme Dialog Customizer */
+.preset-theme-btn {
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-card) !important;
+}
+
+.preset-theme-btn.active {
+  background: var(--primary-gradient) !important;
+  color: white !important;
+  border-color: transparent !important;
+  box-shadow: 0 0 10px var(--primary-glow);
+}
+
+.color-picker-row input[type="color"] {
+  border: none;
+  background: transparent;
+  width: 44px;
+  height: 28px;
+  cursor: pointer;
+  padding: 0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.color-picker-row input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker-row input[type="color"]::-webkit-color-swatch {
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 4px;
 }
 

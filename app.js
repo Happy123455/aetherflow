@@ -47,6 +47,35 @@ const soundEffects = {
     }
   },
 
+  playDragTick(selectionCount) {
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      
+      osc.type = "sine";
+      const pitchMultiplier = Math.min(15, selectionCount);
+      const baseFreq = 400 + (pitchMultiplier * 25);
+      
+      osc.frequency.setValueAtTime(baseFreq, now);
+      osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.7, now + 0.015);
+      
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+      
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      
+      osc.start(now);
+      osc.stop(now + 0.02);
+    } catch (e) {
+      console.warn("Audio Context dragTick error:", e);
+    }
+  },
+
   click(now) {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
@@ -953,6 +982,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupJournalDialogListeners();
   setupJournalTextEditDialogListeners();
   setupJournalNoteExpandDialogListeners();
+  setupJournalThemeDialogListeners();
   setupLoadTimetableListener();
 
   // Setup Zoom Slider Listener
@@ -979,6 +1009,9 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // Load saved colors and apply them before rendering
+  initJournalTheme();
 
   // Render Calendar for first time
   renderCalendar();
@@ -6436,6 +6469,16 @@ function renderJournalView(parent) {
     actions.appendChild(copyBtn);
   }
 
+  // Theme & Colors button
+  const themeBtn = document.createElement("button");
+  themeBtn.className = "btn btn-secondary";
+  themeBtn.innerHTML = `<i data-lucide="palette" style="width:14px;height:14px;margin-right:6px;vertical-align:middle;"></i> Theme & Colors`;
+  themeBtn.addEventListener("click", () => {
+    soundEffects.play("click");
+    openJournalThemeDialog();
+  });
+  actions.appendChild(themeBtn);
+
   // Clear Day button
   const clearBtn = document.createElement("button");
   clearBtn.className = "btn btn-danger";
@@ -6586,7 +6629,12 @@ function renderJournalView(parent) {
           // Mouse Enter (Update Selection)
           cell.addEventListener("mouseenter", () => {
             if (journalSelection.isSelecting) {
+              const prevEnd = journalSelection.endIndex;
               journalSelection.endIndex = cellIdx;
+              if (prevEnd !== cellIdx) {
+                const count = Math.abs(journalSelection.endIndex - journalSelection.startIndex) + 1;
+                soundEffects.playDragTick(count);
+              }
               updateSelectionHighlight();
             }
           });
@@ -6648,7 +6696,12 @@ function renderJournalView(parent) {
       const cell = elem ? elem.closest('.journal-cell') : null;
       if (cell && !cell.classList.contains("occupied")) {
         const cellIdx = parseInt(cell.getAttribute("data-index"), 10);
+        const prevEnd = journalSelection.endIndex;
         journalSelection.endIndex = cellIdx;
+        if (prevEnd !== cellIdx) {
+          const count = Math.abs(journalSelection.endIndex - journalSelection.startIndex) + 1;
+          soundEffects.playDragTick(count);
+        }
         updateSelectionHighlight();
       }
       e.preventDefault(); // Prevent scrolling while swiping
@@ -7483,6 +7536,218 @@ function openJournalNoteExpandDialog(targetId, initialValue) {
   }
 
   dialog.showModal();
+}
+
+/* ----------------------------------------------------
+   Journal Theme & Custom Color Customizer
+   ---------------------------------------------------- */
+const themePresets = {
+  classic: {
+    work: "#ef4444",
+    break: "#10b981",
+    chore: "#f59e0b",
+    other: "#6366f1"
+  },
+  cyberpunk: {
+    work: "#ff007f",
+    break: "#00f3ff",
+    chore: "#ffda00",
+    other: "#a855f7"
+  },
+  pastel: {
+    work: "#fca5a5",
+    break: "#6ee7b7",
+    chore: "#fde047",
+    other: "#c084fc"
+  },
+  ocean: {
+    work: "#0ea5e9",
+    break: "#14b8a6",
+    chore: "#6366f1",
+    other: "#38bdf8"
+  }
+};
+
+function adjustColorBrightness(hex, percent) {
+  let R = parseInt(hex.substring(1, 3), 16);
+  let G = parseInt(hex.substring(3, 5), 16);
+  let B = parseInt(hex.substring(5, 7), 16);
+
+  R = parseInt(R * (100 + percent) / 100);
+  G = parseInt(G * (100 + percent) / 100);
+  B = parseInt(B * (100 + percent) / 100);
+
+  R = Math.min(255, Math.max(0, R));
+  G = Math.min(255, Math.max(0, G));
+  B = Math.min(255, Math.max(0, B));
+
+  const rHex = String(R.toString(16)).padStart(2, '0');
+  const gHex = String(G.toString(16)).padStart(2, '0');
+  const bHex = String(B.toString(16)).padStart(2, '0');
+
+  return `#${rHex}${gHex}${bHex}`;
+}
+
+function getRGBComponents(hex) {
+  let R = parseInt(hex.substring(1, 3), 16);
+  let G = parseInt(hex.substring(3, 5), 16);
+  let B = parseInt(hex.substring(5, 7), 16);
+  return `${R}, ${G}, ${B}`;
+}
+
+function applyThemeSettings(themeColors) {
+  Object.keys(themeColors).forEach(cat => {
+    const baseColor = themeColors[cat];
+    const darkened = adjustColorBrightness(baseColor, -40);
+    const lightened = adjustColorBrightness(baseColor, 20);
+    const rgb = getRGBComponents(baseColor);
+    
+    // Set grid cell variables
+    document.documentElement.style.setProperty(`--gradient-${cat}`, `linear-gradient(135deg, ${baseColor} 0%, ${darkened} 100%)`);
+    document.documentElement.style.setProperty(`--border-${cat}`, lightened);
+    document.documentElement.style.setProperty(`--shadow-${cat}`, `rgba(${rgb}, 0.25)`);
+    
+    // Set global variables used elsewhere
+    let rootVarName = `--color-other`;
+    if (cat === "work") rootVarName = `--color-work`;
+    else if (cat === "break") rootVarName = `--color-health`;
+    else if (cat === "chore") rootVarName = `--color-personal`;
+    
+    document.documentElement.style.setProperty(rootVarName, baseColor);
+    document.documentElement.style.setProperty(`${rootVarName}-bg`, `rgba(${rgb}, 0.15)`);
+    
+    // Sync UI elements inside dialog
+    const input = document.getElementById(`theme-color-${cat}`);
+    if (input) input.value = baseColor;
+    const indicator = document.getElementById(`indicator-color-${cat}`);
+    if (indicator) indicator.style.backgroundColor = baseColor;
+  });
+  
+  localStorage.setItem("aetherflow_theme_colors", JSON.stringify(themeColors));
+}
+
+function initJournalTheme() {
+  const savedColors = localStorage.getItem("aetherflow_theme_colors");
+  if (savedColors) {
+    applyThemeSettings(safeJSONParse(savedColors, themePresets.classic));
+  } else {
+    applyThemeSettings(themePresets.classic);
+  }
+}
+
+function openJournalThemeDialog() {
+  const dialog = document.getElementById("journal-theme-dialog");
+  if (!dialog) return;
+
+  // Initialize input values from current variables
+  const currentColors = safeJSONParse(localStorage.getItem("aetherflow_theme_colors"), themePresets.classic);
+  Object.keys(currentColors).forEach(cat => {
+    const input = document.getElementById(`theme-color-${cat}`);
+    if (input) input.value = currentColors[cat];
+    const indicator = document.getElementById(`indicator-color-${cat}`);
+    if (indicator) indicator.style.backgroundColor = currentColors[cat];
+  });
+
+  // Check active preset highlight
+  highlightActivePreset(currentColors);
+
+  dialog.showModal();
+}
+
+function highlightActivePreset(colors) {
+  const btns = document.querySelectorAll(".preset-theme-btn");
+  btns.forEach(btn => {
+    const presetName = btn.getAttribute("data-preset");
+    const presetColors = themePresets[presetName];
+    if (presetColors) {
+      const match = Object.keys(presetColors).every(cat => presetColors[cat].toLowerCase() === colors[cat].toLowerCase());
+      if (match) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    }
+  });
+}
+
+function setupJournalThemeDialogListeners() {
+  const dialog = document.getElementById("journal-theme-dialog");
+  if (!dialog) return;
+
+  const closeBtn = document.getElementById("btn-close-journal-theme");
+  const saveBtn = document.getElementById("btn-journal-theme-save");
+  const resetBtn = document.getElementById("btn-journal-theme-reset");
+
+  const closeDialog = () => {
+    dialog.close();
+  };
+
+  closeBtn.addEventListener("click", closeDialog);
+
+  // Preset Theme buttons click
+  document.querySelectorAll(".preset-theme-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      soundEffects.play("click");
+      const presetName = btn.getAttribute("data-preset");
+      const presetColors = themePresets[presetName];
+      if (presetColors) {
+        Object.keys(presetColors).forEach(cat => {
+          const input = document.getElementById(`theme-color-${cat}`);
+          if (input) input.value = presetColors[cat];
+          const indicator = document.getElementById(`indicator-color-${cat}`);
+          if (indicator) indicator.style.backgroundColor = presetColors[cat];
+        });
+        
+        // Highlight active preset button
+        document.querySelectorAll(".preset-theme-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      }
+    });
+  });
+
+  // Input changes sync indicators
+  ["work", "break", "chore", "other"].forEach(cat => {
+    const input = document.getElementById(`theme-color-${cat}`);
+    if (input) {
+      input.addEventListener("input", (e) => {
+        const indicator = document.getElementById(`indicator-color-${cat}`);
+        if (indicator) indicator.style.backgroundColor = e.target.value;
+        
+        // Any custom input change clears preset active highlights
+        document.querySelectorAll(".preset-theme-btn").forEach(b => b.classList.remove("active"));
+      });
+    }
+  });
+
+  saveBtn.addEventListener("click", () => {
+    soundEffects.play("success");
+    const colors = {
+      work: document.getElementById("theme-color-work").value,
+      break: document.getElementById("theme-color-break").value,
+      chore: document.getElementById("theme-color-chore").value,
+      other: document.getElementById("theme-color-other").value
+    };
+    applyThemeSettings(colors);
+    
+    // Re-render calendar to propagate changes
+    renderCalendar();
+    
+    showAppAlert("🎨 Theme configuration applied successfully!");
+    closeDialog();
+  });
+
+  resetBtn.addEventListener("click", () => {
+    soundEffects.play("click");
+    Object.keys(themePresets.classic).forEach(cat => {
+      const input = document.getElementById(`theme-color-${cat}`);
+      if (input) input.value = themePresets.classic[cat];
+      const indicator = document.getElementById(`indicator-color-${cat}`);
+      if (indicator) indicator.style.backgroundColor = themePresets.classic[cat];
+    });
+    document.querySelectorAll(".preset-theme-btn").forEach(b => b.classList.remove("active"));
+    const classicBtn = document.querySelector(".preset-theme-btn[data-preset='classic']");
+    if (classicBtn) classicBtn.classList.add("active");
+  });
 }
 
 
