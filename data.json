@@ -2149,18 +2149,6 @@
       "colIndex": 1,
       "colWidth": 50,
       "colLeft": 50
-    },
-    {
-      "id": "exercise-1781606058231",
-      "title": "🌿 Daily Exercise",
-      "date": "2026-06-16",
-      "startTime": "14:00",
-      "duration": 30,
-      "category": "health",
-      "description": "Daily exercise routine to stay fit.",
-      "completed": false,
-      "xp": 25,
-      "stress": -15
     }
   ],
   "userStats": {
@@ -2273,5 +2261,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781606058232
+  "syncTime": 1781606312750
 }
