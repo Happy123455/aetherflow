@@ -1720,7 +1720,7 @@
       "startTime": "07:45",
       "duration": 55,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 20,
       "stress": 10,
       "value": 0,
@@ -1736,7 +1736,7 @@
       "startTime": "08:40",
       "duration": 55,
       "category": "work",
-      "completed": false,
+      "completed": true,
       "xp": 20,
       "stress": 10,
       "value": 0,
@@ -2124,9 +2124,9 @@
     }
   ],
   "userStats": {
-    "xp": 672,
+    "xp": 712,
     "level": 1,
-    "stress": 90,
+    "stress": 100,
     "value": 50
   },
   "customTemplates": [
@@ -2233,5 +2233,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781590786554
+  "syncTime": 1781590797281
 }
