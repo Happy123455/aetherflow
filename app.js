@@ -2053,7 +2053,7 @@ function updateLiveTimeIndicator() {
       const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
       if (state.journalViewMode === "grid") {
-        const slotIdx = (now.getHours() * 12) + Math.floor(now.getMinutes() / 5);
+        const slotIdx = (now.getHours() * 30) + Math.floor(now.getMinutes() / 2);
         const liveCell = document.querySelector(`.journal-cell[data-index="${slotIdx}"]`);
         if (liveCell) {
           liveCell.classList.add("journal-cell-live");
@@ -7217,7 +7217,7 @@ function openJournalTextEditDialog() {
     const startMin = getMinutes(task.startTime);
     const endMin = startMin + (task.duration || 30);
     const start12 = formatTime12h(task.startTime);
-    const end24 = slotToTime24(Math.min(288, endMin / 5));
+    const end24 = slotToTime24(Math.min(720, endMin / 2));
     const end12 = formatTime12h(end24);
 
     const cat = task.category || "other";
@@ -7247,7 +7247,7 @@ function copyNotepadTextToClipboard() {
       const startMin = getMinutes(task.startTime);
       const endMin = startMin + (task.duration || 30);
       const start12 = formatTime12h(task.startTime);
-      const end24 = slotToTime24(Math.min(288, endMin / 5));
+      const end24 = slotToTime24(Math.min(720, endMin / 2));
       const end12 = formatTime12h(end24);
 
       const cat = task.category || "other";
