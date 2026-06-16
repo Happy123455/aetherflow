@@ -41,6 +41,12 @@ const soundEffects = {
         case "burnout":
           this.burnout(now);
           break;
+        case "typeclick":
+          this.typeclick(now);
+          break;
+        case "softHover":
+          this.softHover(now);
+          break;
       }
     } catch (e) {
       console.warn("Audio Context error:", e);
@@ -191,6 +197,57 @@ const soundEffects = {
     osc2.start(now);
     osc1.stop(now + 0.65);
     osc2.stop(now + 0.65);
+  },
+
+  typeclick(now) {
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    const gain2 = this.ctx.createGain();
+    
+    // High-pitched transient click
+    osc1.type = "sine";
+    const pitchSkew = (Math.random() - 0.5) * 40;
+    osc1.frequency.setValueAtTime(1600 + pitchSkew * 5, now);
+    osc1.frequency.exponentialRampToValueAtTime(1000, now + 0.005);
+    gain1.gain.setValueAtTime(0.015, now);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.005);
+    
+    // Low-pitched resonance thump
+    osc2.type = "triangle";
+    osc2.frequency.setValueAtTime(180 + pitchSkew, now);
+    osc2.frequency.exponentialRampToValueAtTime(120, now + 0.015);
+    gain2.gain.setValueAtTime(0.035, now);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+    
+    osc1.connect(gain1);
+    gain1.connect(this.ctx.destination);
+    
+    osc2.connect(gain2);
+    gain2.connect(this.ctx.destination);
+    
+    osc1.start(now);
+    osc1.stop(now + 0.01);
+    
+    osc2.start(now);
+    osc2.stop(now + 0.02);
+  },
+
+  softHover(now) {
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(1000, now);
+    
+    gain.gain.setValueAtTime(0.004, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.008);
+    
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    
+    osc.start(now);
+    osc.stop(now + 0.01);
   }
 };
 
@@ -7022,6 +7079,16 @@ function minuteToTime12h(minutes) {
 function renderNotepadView(container, activeDateStr) {
   container.innerHTML = "";
   
+  // Add 6 skeuomorphic metal rings down the left margin
+  const ringContainer = document.createElement("div");
+  ringContainer.className = "notepad-rings-container";
+  for (let i = 0; i < 6; i++) {
+    const ring = document.createElement("div");
+    ring.className = "notepad-ring";
+    ringContainer.appendChild(ring);
+  }
+  container.appendChild(ringContainer);
+
   // Create a scroll wrapper to contain the 204 lines
   const scrollContainer = document.createElement("div");
   scrollContainer.style.height = "550px";
@@ -7048,6 +7115,11 @@ function renderNotepadView(container, activeDateStr) {
     line.className = "notepad-line";
     line.setAttribute("data-start-min", startMin);
     line.setAttribute("data-end-min", endMin);
+    
+    // Play soft feedback click on hover
+    line.addEventListener("mouseenter", () => {
+      soundEffects.play("softHover");
+    });
     
     // Active time indicator checking
     const now = new Date();
@@ -7129,6 +7201,9 @@ function renderNotepadView(container, activeDateStr) {
           });
           
           input.addEventListener("keydown", (e) => {
+            if (e.key.length === 1 || e.key === "Backspace" || e.key === " ") {
+              soundEffects.play("typeclick");
+            }
             if (e.key === "Enter") {
               input.blur();
             }
@@ -7148,6 +7223,26 @@ function renderNotepadView(container, activeDateStr) {
           catBadge.style.padding = "1px 6px";
           catBadge.style.marginLeft = "10px";
           catBadge.innerText = catLabel;
+          catBadge.style.cursor = "pointer";
+          catBadge.title = "Click to cycle category";
+          
+          catBadge.addEventListener("click", (e) => {
+            e.stopPropagation();
+            soundEffects.play("swoosh");
+            
+            const categories = ["work", "health", "personal", "other"];
+            const currentIdx = categories.indexOf(coveringTask.category || "other");
+            const nextCat = categories[(currentIdx + 1) % categories.length];
+            
+            coveringTask.category = nextCat;
+            localStorage.setItem("aetherflow_tasks", JSON.stringify(state.tasks));
+            
+            triggerViewChange(() => {
+              renderCalendar();
+              updateAgendaList();
+            });
+          });
+          
           contentDiv.appendChild(catBadge);
         } else {
           // Normal Task - read-only in notepad view, click opens standard task dialog
@@ -7233,6 +7328,9 @@ function renderNotepadView(container, activeDateStr) {
       });
       
       input.addEventListener("keydown", (e) => {
+        if (e.key.length === 1 || e.key === "Backspace" || e.key === " ") {
+          soundEffects.play("typeclick");
+        }
         if (e.key === "Enter") {
           input.blur();
         }
