@@ -3792,7 +3792,7 @@ const collegeTimetable = {
     { time: "09:50", duration: 100, title: "2301CV514 – Theory of Architecture Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "SGG" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
     { time: "12:10", duration: 50, title: "2301CV503 – Transportation Engg (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DAJ" },
-    { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "fitness", xp: 20, stress: -15, value: 0 }
+    { time: "13:00", duration: 50, title: "🏅 SPORTS", category: "health", xp: 20, stress: -15, value: 0 }
   ],
   thursday: [
     { time: "07:45", duration: 55, title: "2301CV501 – ESD (Lec)", category: "work", xp: 20, stress: 10, value: 0, room: "G-203", faculty: "DKJ" },
@@ -3808,7 +3808,7 @@ const collegeTimetable = {
     { time: "09:35", duration: 15, title: "☕ Break", category: "personal", xp: 0, stress: -5, value: 0 },
     { time: "09:50", duration: 100, title: "2301CV501 – ESD Lab (B2)", category: "work", xp: 35, stress: 15, value: 0, room: "G-203", faculty: "DDH" },
     { time: "11:30", duration: 40, title: "🍽️ Lunch Break", category: "personal", xp: 0, stress: -10, value: 0 },
-    { time: "12:10", duration: 100, title: "🏅 SPORTS", category: "fitness", xp: 25, stress: -15, value: 0 }
+    { time: "12:10", duration: 100, title: "🏅 SPORTS", category: "health", xp: 25, stress: -15, value: 0 }
   ]
 };
 
