@@ -1611,7 +1611,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "51orjx7mqj456vg",
@@ -1624,7 +1627,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "mddxldtmqj456vg",
@@ -1637,7 +1643,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "l0lk66dmqj456vg",
@@ -1650,7 +1659,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "w3epzi1mqj456vg",
@@ -1663,7 +1675,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "djjypqimqj456vg",
@@ -1676,7 +1691,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "1pmftb1mqj456vg",
@@ -1689,7 +1707,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "160akrlmqj456vg",
@@ -1702,7 +1723,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "45ffnb0mqj456vg",
@@ -1715,7 +1739,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ha5klf5mqj456vg",
@@ -1728,7 +1755,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "lo2m3oemqj456vg",
@@ -1741,7 +1771,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "38k6mg8mqj456vg",
@@ -1754,7 +1787,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "vmiibramqj456vg",
@@ -1767,7 +1803,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "m4cml31mqj456vg",
@@ -1780,7 +1819,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "q2ohw61mqj456vg",
@@ -1793,7 +1835,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "dv59g6bmqj456vg",
@@ -1806,7 +1851,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "yppip0lmqj456vg",
@@ -1819,7 +1867,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "s1h3xa7mqj456vg",
@@ -1832,7 +1883,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "6q20ufemqj456vg",
@@ -1845,7 +1899,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "6cgdzi4mqj456vg",
@@ -1858,7 +1915,10 @@
       "completed": false,
       "xp": 20,
       "stress": -15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "yvo0u9smqj456vg",
@@ -1871,7 +1931,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "l3hheyimqj456vg",
@@ -1884,7 +1947,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "8lqhh3omqj456vg",
@@ -1897,7 +1963,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "nmtzorgmqj456vg",
@@ -1910,7 +1979,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "ko4p8xqmqj456vg",
@@ -1923,7 +1995,10 @@
       "completed": false,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "73db90hmqj456vg",
@@ -1936,7 +2011,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "oqqvn4qmqj456vg",
@@ -1949,7 +2027,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "1w9ehpbmqj456vg",
@@ -1962,7 +2043,10 @@
       "completed": false,
       "xp": 20,
       "stress": 10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "obkbssimqj456vg",
@@ -1975,7 +2059,10 @@
       "completed": false,
       "xp": 0,
       "stress": -5,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "mkcpmtumqj456vg",
@@ -1988,7 +2075,10 @@
       "completed": false,
       "xp": 35,
       "stress": 15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "enmnteomqj456vg",
@@ -1998,10 +2088,13 @@
       "startTime": "11:30",
       "duration": 40,
       "category": "personal",
-      "completed": false,
+      "completed": true,
       "xp": 0,
       "stress": -10,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     },
     {
       "id": "rdxw6kmmqj456vg",
@@ -2011,16 +2104,19 @@
       "startTime": "12:10",
       "duration": 100,
       "category": "health",
-      "completed": false,
+      "completed": true,
       "xp": 25,
       "stress": -15,
-      "value": 0
+      "value": 0,
+      "colIndex": 0,
+      "colWidth": 100,
+      "colLeft": 0
     }
   ],
   "userStats": {
-    "xp": 857,
+    "xp": 882,
     "level": 1,
-    "stress": 90,
+    "stress": 65,
     "value": 50
   },
   "customTemplates": [
@@ -2127,5 +2223,5 @@
     "group-chores": true,
     "group-past": true
   },
-  "syncTime": 1781763768846
+  "syncTime": 1781855857673
 }
